@@ -19,6 +19,6 @@
   
    <files>
 		<file src="..\..\..\LICENSE" />
-		<file src="\bin\Release\*Ruzzie.Mtg.Core*.*" target="lib\net461\"/>  
+		<file src="bin\Release\*Ruzzie.Mtg.Core*.*" target="lib\net461\"/>  
     </files>
 </package>
