@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Ruzzie.Mtg.Core</id>
+    <version>$version$</version>
+    <title>Ruzzie.Mtg.Core</title>
+    <authors>Dorus Verhoeckx</authors>
+    <owners>Dorus Verhoeckx</owners>
+    <licenseUrl>https://github.com/Ruzzie/Ruzzie.Mtg.Core/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Ruzzie/Ruzzie.Mtg.Core</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Some shared types for my Mtg project</description>
+    <copyright>Copyright 2016</copyright>
+    <!--tags></tags-->
+	  <!--dependencies>
+      <dependency id="Ruzzie.Cache.FlashCache" version="(0.11.0,)" />
+    </dependencies-->
+  </metadata>
+  
+   <files>
+		<file src="..\..\..\LICENSE" />
+		<file src="\bin\Release\*Ruzzie.Mtg.Core*.*" target="lib\net461\"/>  
+    </files>
+</package>
