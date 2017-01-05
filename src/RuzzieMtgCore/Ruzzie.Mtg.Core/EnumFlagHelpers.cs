@@ -49,20 +49,29 @@ namespace Ruzzie.Mtg.Core
         {
             Array values = Enum.GetValues(enumType);
             HashSet<T> uniqueValues = new HashSet<T>();
+
             for (var i = 0; i < values.Length; i++)
             {
-                T currVal = (T) values.GetValue(i);
-                uniqueValues.Add(currVal);
+                T singleValue = (T)values.GetValue(i);
+                T combinedValue = singleValue;
 
-                for (var j = 0; j < values.Length; j++)
-                {
-                    if (i == j)
+                for (var j = values.Length - 1; j >= 0; j--)
+                {                    
+                    //each combination of 2
+                    T secondValue = (T)values.GetValue(j);
+                    uniqueValues.Add(bitwiseOr(singleValue, secondValue));
+
+                    combinedValue = bitwiseOr(combinedValue, secondValue);
+                    uniqueValues.Add(combinedValue);
+
+                    T otherCombinedValue = secondValue;
+                    for (int k = i; k < values.Length; k++)
                     {
-                        continue;
+                        T kValue = (T) values.GetValue(k);
+                        otherCombinedValue = bitwiseOr(otherCombinedValue, kValue);
+                        uniqueValues.Add(bitwiseOr(combinedValue, kValue));
+                        uniqueValues.Add(otherCombinedValue);
                     }
-
-                    currVal = bitwiseOr(currVal, (T) values.GetValue(j));
-                    uniqueValues.Add(currVal);
                 }
             }
             return uniqueValues;

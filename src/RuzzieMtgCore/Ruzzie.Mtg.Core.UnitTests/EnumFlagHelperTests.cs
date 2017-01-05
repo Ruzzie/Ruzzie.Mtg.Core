@@ -8,15 +8,40 @@ namespace Ruzzie.Mtg.Core.UnitTests
     public class EnumFlagHelperTests
     {
         [Test]
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(4)]
+        [TestCase(8)]
+        [TestCase(16)]
+        [TestCase(6)]
+        [TestCase(10)]
+        [TestCase(12)]
+        [TestCase(13)]
+        [TestCase(18)]
+        [TestCase(20)]
+        [TestCase(21)]
+        [TestCase(24)]
+        [TestCase(25)]
+        [TestCase(26)]
+        [TestCase(28)]
+        public void ListOfAllPossibleUniqueFlagsCombinationsFlagsTest(int colorCode)
+        {
+            var listAllPossibleUniqueFlagsCombinations = EnumFlagHelpers<Color>.ListAllPossibleUniqueFlagsCombinations();           
+            Assert.That(listAllPossibleUniqueFlagsCombinations, Contains.Item((Color) colorCode));
+        }
+
+        [Test]
         public void ListOfAllPossibleUniqueFlagsCombinationsTest()
         {
-            Assert.That(EnumFlagHelpers<Color>.ListAllPossibleUniqueFlagsCombinations().Count, Is.EqualTo(16));
+            Assert.That(EnumFlagHelpers<Color>.ListAllPossibleUniqueFlagsCombinations().Count, Is.EqualTo(32));
         }
 
         [Test]
         public void ListOfAllPossibleUniqueForBasicTypesTest()
         {
-            Assert.That(EnumFlagHelpers<BasicType>.ListAllPossibleUniqueFlagsCombinations().Count, Is.EqualTo(37));
+            var listAllPossibleUniqueFlagsCombinations = EnumFlagHelpers<BasicType>.ListAllPossibleUniqueFlagsCombinations();
+            Assert.That(listAllPossibleUniqueFlagsCombinations.Count, Is.EqualTo(158));
         }
 
         [Test]
@@ -41,7 +66,8 @@ namespace Ruzzie.Mtg.Core.UnitTests
                 Contains.Item(LongFlagTypeEnum.A)
                     .And.Contains(LongFlagTypeEnum.B)
                     .And.Contains(LongFlagTypeEnum.C)
-                    .And.Contains(LongFlagTypeEnum.B | LongFlagTypeEnum.C));
+                    .And.Contains(LongFlagTypeEnum.B | LongFlagTypeEnum.C)            
+                    );
         }
 
         [Test]
