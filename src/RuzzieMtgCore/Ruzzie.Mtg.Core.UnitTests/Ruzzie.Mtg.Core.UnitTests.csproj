@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicTypesTests.cs" />
+    <Compile Include="CardNameLookupTests.cs" />
     <Compile Include="ColorsTests.cs" />
     <Compile Include="EnumFlagHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

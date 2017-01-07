@@ -2,6 +2,9 @@
 
 namespace Ruzzie.Mtg.Core
 {
+    /// <summary>
+    /// Representation of one or more Colors for a Mtg Card.
+    /// </summary>
     [Flags]
     public enum Color
     {

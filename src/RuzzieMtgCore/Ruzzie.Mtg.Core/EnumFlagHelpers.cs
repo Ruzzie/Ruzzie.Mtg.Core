@@ -5,6 +5,10 @@ using System.Reflection;
 
 namespace Ruzzie.Mtg.Core
 {
+    /// <summary>
+    /// Helper for Enums with the Flags type.
+    /// </summary>
+    /// <typeparam name="T">The Enum type</typeparam>
     public static class EnumFlagHelpers<T> where T : struct, IConvertible, IComparable, IFormattable
     {
         private static readonly EnumTypeInfo TypeInfo;
@@ -94,6 +98,15 @@ namespace Ruzzie.Mtg.Core
             return enumTypeInfo;
         }
 
+        /// <summary>
+        /// Lists all possible unique flags combinations.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">
+        /// T is not an enum
+        /// or
+        /// T does not have the Flags Attribute set
+        /// </exception>
         public static IReadOnlyCollection<T> ListAllPossibleUniqueFlagsCombinations()
         {
             if (!TypeInfo.IsEnum)
@@ -108,6 +121,11 @@ namespace Ruzzie.Mtg.Core
             return TypeInfo.UniqueValues;
         }
 
+        /// <summary>
+        /// Lists all single values.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">T is not an enum</exception>
         public static IReadOnlyCollection<T> ListAllSingleValues()
         {
             if (!TypeInfo.IsEnum)

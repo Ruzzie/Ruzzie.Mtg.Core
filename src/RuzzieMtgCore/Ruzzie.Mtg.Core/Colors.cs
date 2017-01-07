@@ -3,11 +3,25 @@ using System.Collections.Concurrent;
 
 namespace Ruzzie.Mtg.Core
 {
+    /// <summary>
+    /// Helper methods for the <see cref="Color"/> enum;
+    /// </summary>
     public static class Colors
     {
+        /// <summary>
+        /// All colors
+        /// </summary>
         public static readonly Color AllColors = Color.B | Color.G | Color.U | Color.W | Color.R;
         private static readonly ConcurrentDictionary<string,Color> EnumNameCache = new ConcurrentDictionary<string, Color>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// Determines whether the specified colors to check contains color.
+        /// </summary>
+        /// <param name="colors">The colors.</param>
+        /// <param name="colorsToCheck">The colors to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified colors to check contains color; otherwise, <c>false</c>.
+        /// </returns>
         public static bool ContainsColor(this Color colors,Color colorsToCheck)
         {
             if ((colors & colorsToCheck) != 0)
@@ -61,17 +75,37 @@ namespace Ruzzie.Mtg.Core
             return color;
         }
 
+        /// <summary>
+        /// Determines whether [has more than one color].
+        /// </summary>
+        /// <param name="color">The color.</param>
+        /// <returns>
+        ///   <c>true</c> if [has more than one color] [the specified color]; otherwise, <c>false</c>.
+        /// </returns>
         public static bool HasMoreThanOneColor(this Color color)
         {
             return (color & (color - 1)) != 0;
-        }       
+        }
 
+        /// <summary>
+        /// Determines whether [has more than color count] [the specified count].
+        /// </summary>
+        /// <param name="colors">The colors.</param>
+        /// <param name="count">The count.</param>
+        /// <returns>
+        ///   <c>true</c> if [has more than color count] [the specified count]; otherwise, <c>false</c>.
+        /// </returns>
         public static bool HasMoreThanColorCount(this Color colors, int count)
         {
             int numberOfColorsSet = GetNumberOfColors(colors);
             return numberOfColorsSet > count;
         }
 
+        /// <summary>
+        /// Gets the number of colors.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static int GetNumberOfColors(this Color value)
         {
             int iCount = 0;

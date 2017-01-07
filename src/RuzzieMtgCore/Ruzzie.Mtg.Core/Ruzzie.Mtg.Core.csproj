@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Ruzzie.Mtg.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Ruzzie.Mtg.Core.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -38,6 +40,11 @@
     <Compile Include="BasicTypes.cs" />
     <Compile Include="Colors.cs" />
     <Compile Include="Color.cs" />
+    <Compile Include="Data\CardNameLookup.cs" />
+    <Compile Include="Data\ICardNameLookup.cs" />
+    <Compile Include="Data\IHasName.cs" />
+    <Compile Include="Data\INameLookupResult.cs" />
+    <Compile Include="Data\LookupMatchResult.cs" />
     <Compile Include="EnumFlagHelpers.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="Formats.cs" />
