@@ -25,6 +25,7 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("Instant — Arcane", BasicType.Instant)]
         [TestCase("Legendary Enchantment Creature — God", BasicType.Enchantment | BasicType.Creature)]
         [TestCase("Planeswalker — Liliana", BasicType.Planeswalker)]
+        [TestCase("Basic Snow Land — Plains", BasicType.BasicLand)]
         public void BasicTypesParsingTests(string types, BasicType expectedBasicType)
         {
             Assert.That(BasicTypes.From(types), Is.EqualTo(expectedBasicType));
@@ -35,7 +36,7 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase(BasicType.Creature, BasicType.Creature | BasicType.Artifact)]
         public void ContainsBasicType(BasicType input, BasicType shouldContain)
         {
-            Assert.That(BasicTypes.ContainsBasicType(input,shouldContain), Is.True);
+            Assert.That(input.ContainsBasicType(shouldContain), Is.True);
         }
     }
 }

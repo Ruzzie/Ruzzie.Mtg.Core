@@ -59,7 +59,7 @@ namespace Ruzzie.Mtg.Core
 
         private static BasicType FromSingleTypeStringLine(string currentTypeString)
         {
-            if (StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Land"))
+            if (StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Land") || StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Snow Land"))
             {
                 return BasicType.BasicLand;               
             }
