@@ -34,6 +34,18 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ruzzie.Caching, Version=0.12.94.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.Cache.FlashCache.0.12.94\lib\net461\Ruzzie.Caching.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ruzzie.Common, Version=0.8.32.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.Common.0.8.32\lib\net461\Ruzzie.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Ruzzie.FuzzyStrings, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.FuzzyStrings.1.0.8\lib\net461\Ruzzie.FuzzyStrings.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

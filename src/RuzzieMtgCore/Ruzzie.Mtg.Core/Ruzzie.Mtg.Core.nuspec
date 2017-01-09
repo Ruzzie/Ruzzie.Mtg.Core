@@ -12,9 +12,9 @@
     <description>Some shared types for my Mtg project</description>
     <copyright>Copyright 2016</copyright>
     <!--tags></tags-->
-	  <!--dependencies>
-      <dependency id="Ruzzie.Cache.FlashCache" version="(0.11.0,)" />
-    </dependencies-->
+	  <dependencies>
+      <dependency id="Ruzzie.FuzzyStrings" version="(1.0.7,)" />
+    </dependencies>
   </metadata>
   
    <files>

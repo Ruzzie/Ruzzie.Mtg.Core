@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Ruzzie.FuzzyStrings;
 using Ruzzie.Mtg.Core.Data;
 
 namespace Ruzzie.Mtg.Core.UnitTests
@@ -57,11 +59,29 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("snapc", "Snapcaster Mage")]
         [TestCase("gideon ally of zendikar", "Gideon, Ally of Zendikar")]
         [TestCase("mina and denn wildborn", "Mina and Denn, Wildborn")]
+        [TestCase("Turn / Burn", "Turn // Burn")]
+        [TestCase("Rakdos Return", "Rakdos's Return")]
+        [TestCase("Rakdos's Return", "Rakdos's Return")]
+        [TestCase("Rakdos's Returns", "Rakdos's Return")]
+        //Some Fuzzy matching tests
+        [TestCase("Raakdoos Returns", "Rakdos's Return")]
+        [TestCase("Aethersprouts", "Aetherspouts")]
+        [TestCase("jotun grunt", "Jötun Grunt")]
+        [TestCase("men o war", "Man-o'-War")]
         public void FindCardTests(string searchCardName, string actualName)
         {
             //Arrange           
             TestCard findCardByName = _cardNameLookup.FindCardByName(searchCardName).ResultObject;
             Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
+        }
+
+
+        [Test]
+        public void StripTest()
+        {
+            string strippedOne = "Men-o'-War".RemoveSpecialCharacters();
+            Console.WriteLine("Stripped: "+strippedOne);
+            Console.WriteLine(strippedOne.FuzzyMatch("Man-o'-War".RemoveSpecialCharacters(), false));
         }
 
         [TestCase("  ")]
@@ -112,7 +132,9 @@ namespace Ruzzie.Mtg.Core.UnitTests
                 new TestCard {Name = "Silvergill Adept"},
                 new TestCard {Name = "Snapcaster Mage"},
                 new TestCard {Name = "Gideon, Ally of Zendikar"},
-                new TestCard {Name = "Mina and Denn, Wildborn"}
+                new TestCard {Name = "Mina and Denn, Wildborn"},
+                new TestCard {Name = "Turn // Burn"},
+                new TestCard {Name = "Rakdos's Return"}
             };
         }
 

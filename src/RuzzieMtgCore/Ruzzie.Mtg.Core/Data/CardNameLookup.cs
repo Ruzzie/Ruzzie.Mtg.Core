@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ruzzie.FuzzyStrings;
 
 namespace Ruzzie.Mtg.Core.Data
 {
@@ -92,7 +93,7 @@ namespace Ruzzie.Mtg.Core.Data
 
         private TCard Search(string cardname)
         {
-            TCard listedCard = FindCardByExactName(cardname.Replace(" s ", "\'s "));
+            TCard listedCard = FindCardByExactName(cardname.Replace(" s ", "\'s ").Replace(" / "," // "));
 
             if ( _comparer.Equals(listedCard,Empty))
             {
@@ -141,7 +142,6 @@ namespace Ruzzie.Mtg.Core.Data
                 }
             }
 
-
             if ( _comparer.Equals(listedCard,Empty))
             {
                 var words = cardname.Split(new[] { " " }, StringSplitOptions.None);
@@ -150,17 +150,9 @@ namespace Ruzzie.Mtg.Core.Data
                 {
                     for (int i = 0; i < words.Length; i++)
                     {
-                        if ( _comparer.Equals(listedCard,Empty) && words[i].EndsWith("s", StringComparison.OrdinalIgnoreCase))
-                        {
-                            words[i] = words[i] + "\'";
-                            string cardWithApostrophesAddedAfterWord = string.Join(" ", words);
-                            listedCard = FindCardByExactName(cardWithApostrophesAddedAfterWord);
-
-                            if ( _comparer.Equals(listedCard,Empty))
-                            {
-                                listedCard = TryFindCardByVariatingWordJoiningOptions(words);
-                            }
-                        }
+                        var wordEndsWith = "s";
+                        var stringToAddAfterWord = "\'";
+                        listedCard = TryFindByVariatingCharacterOnEndOfWord(listedCard, words, i, wordEndsWith, stringToAddAfterWord);
                     }
                 }
 
@@ -175,6 +167,69 @@ namespace Ruzzie.Mtg.Core.Data
                     {
                         listedCard = TryFindCardByVariatingWordJoiningOptions(words);
                     }
+                }
+            }
+
+            if (_comparer.Equals(listedCard, Empty))
+            {
+                var words = cardname.Split(new[] {" "}, StringSplitOptions.None);
+                listedCard = TryFindCardByVariatingWordJoiningOptions(words);
+                if (_comparer.Equals(listedCard, Empty))
+                {
+                    for (int i = 0; i < words.Length; i++)
+                    {
+                        var wordEndsWith = "s";
+                        var stringToAddAfterWord = "\'s";
+                        listedCard = TryFindByVariatingCharacterOnEndOfWord(listedCard, words, i, wordEndsWith, stringToAddAfterWord);
+                    }
+                }
+            }
+
+            if (_comparer.Equals(listedCard, Empty))
+            {
+                var words = cardname.Split(new[] { " " }, StringSplitOptions.None);
+                listedCard = TryFindCardByVariatingWordJoiningOptions(words);
+                if (_comparer.Equals(listedCard, Empty))
+                {
+                    for (int i = 0; i < words.Length; i++)
+                    {
+                        if (words[i].EndsWith("s") && !words[i].EndsWith("'s"))
+                        {
+                            words[i] = words[i].Replace("s", "");
+                            string cardWithWordThatEndsInSRemovedS = string.Join(" ", words);
+                            listedCard = FindCardByExactName(cardWithWordThatEndsInSRemovedS);
+
+                            if (_comparer.Equals(listedCard, Empty))
+                            {
+                                listedCard = TryFindCardByVariatingWordJoiningOptions(words);
+                            }
+                        }
+                    }
+                }
+
+            }
+            //Lastly do a full fuzzy match
+            if (_comparer.Equals(listedCard, Empty))
+            {
+                listedCard = FindCardByFuzzyMatch(cardname);
+            }
+
+            return listedCard;
+        }
+
+     
+
+        private TCard TryFindByVariatingCharacterOnEndOfWord(TCard listedCard, string[] words, int i, string wordEndsWith, string afterWordWithCharacherString)
+        {
+            if (_comparer.Equals(listedCard, Empty) && words[i].EndsWith(wordEndsWith, StringComparison.OrdinalIgnoreCase))
+            {
+                words[i] = words[i] + afterWordWithCharacherString;
+                string cardWithApostrophesAddedAfterWord = string.Join(" ", words);
+                listedCard = FindCardByExactName(cardWithApostrophesAddedAfterWord);
+
+                if (_comparer.Equals(listedCard, Empty))
+                {
+                    listedCard = TryFindCardByVariatingWordJoiningOptions(words);
                 }
             }
             return listedCard;
@@ -203,7 +258,6 @@ namespace Ruzzie.Mtg.Core.Data
             {
                 listedCard = VariateWordsForCardnameWithLengthFour(words);
             }
-
 
             if ( _comparer.Equals(listedCard,Empty) && words.Length > 2)
             {
@@ -484,5 +538,15 @@ namespace Ruzzie.Mtg.Core.Data
 
             return firstOrDefault;
         }
+
+        private TCard FindCardByFuzzyMatch(string cardname)
+        {
+            TCard firstOrDefault = _allCards
+                .FirstOrDefault(
+                    card => card.Name.FuzzyEquals(cardname, 0.75D, false) || card.Name.RemoveSpecialCharacters().FuzzyEquals(cardname.RemoveSpecialCharacters(),
+                                0.75D, false));
+
+            return firstOrDefault;
+        }      
     }
 }
