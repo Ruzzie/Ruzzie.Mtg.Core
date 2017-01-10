@@ -62,6 +62,11 @@
     <Compile Include="Format.cs" />
     <Compile Include="Formats.cs" />
     <Compile Include="Data\IBasicCardProperties.cs" />
+    <Compile Include="IO\IFileDownloader.cs" />
+    <Compile Include="IO\IRemoteFileLoader.cs" />
+    <Compile Include="IO\IRemoteFileMetaData.cs" />
+    <Compile Include="IO\RemoteFileLoader.cs" />
+    <Compile Include="IO\RemoteFileMetaData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
