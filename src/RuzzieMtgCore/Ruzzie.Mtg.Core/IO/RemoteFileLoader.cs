@@ -18,14 +18,14 @@ namespace Ruzzie.Mtg.Core.IO
         /// </summary>
         /// <param name="fileDownloader">The file downloader.</param>
         /// <param name="filename">The filename.</param>
-        /// <param name="localPathToStoreFile">The local path to store file.</param>
+        /// <param name="localPathToStoreFile">The path (directory where to store the file) id the directory does not exists it will be created.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException">
         /// Value cannot be null or whitespace.
         /// or
         /// Value cannot be null or whitespace.
         /// </exception>
-        public RemoteFileLoader(IFileDownloader fileDownloader, string filename, string localPathToStoreFile)
+        public RemoteFileLoader(IFileDownloader fileDownloader, string filename, string localPathToStoreFile = ".")
         {
             if (fileDownloader == null)
             {
@@ -40,6 +40,12 @@ namespace Ruzzie.Mtg.Core.IO
             {
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(localPathToStoreFile));
             }
+            
+            if (!Directory.Exists(localPathToStoreFile))
+            {
+                Directory.CreateDirectory(localPathToStoreFile);
+            }
+
             _fileDownloader = fileDownloader;
             _filename = filename;
             _localPathToStoreFile = localPathToStoreFile;
