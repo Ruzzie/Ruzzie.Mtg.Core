@@ -12,6 +12,7 @@ namespace Ruzzie.Mtg.Core.IO
         private readonly IFileDownloader _fileDownloader;
         private readonly string _filename;
         private readonly string _localPathToStoreFile;
+        private readonly object _lockObject = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteFileLoader"/> class.
@@ -64,19 +65,32 @@ namespace Ruzzie.Mtg.Core.IO
             FileInfo fileInfo = new FileInfo(localFileName);
             if (!fileInfo.Exists)
             {
-                //File does not exists so download the file
-                _fileDownloader.DownloadFile(localFileName);
+                lock (_lockObject)
+                {
+                    if (!fileInfo.Exists) //double check
+                    {
+                        //File does not exists so download the file
+                        _fileDownloader.DownloadFile(localFileName);
+                    }
+                }
             }
             else
             {
                 //Dont check for a new version if it was less than a day ago (perf opt)
-
                 //Check if there is a newer version of the file
                 var localFileLastWriteTime = fileInfo.LastWriteTimeUtc;
-                if (_fileDownloader.MetaData.LastModifiedTimeUtc > localFileLastWriteTime)
+                DateTime? remoteFileLastModifiedDateTime = _fileDownloader.MetaData.LastModifiedTimeUtc;
+
+                if (remoteFileLastModifiedDateTime > localFileLastWriteTime)
                 {
-                    //remote file is newer so download the file
-                    _fileDownloader.DownloadFile(localFileName);
+                    lock (_lockObject) //assume remote metadata access is lock free
+                    {
+                        if (remoteFileLastModifiedDateTime > new FileInfo(localFileName).LastWriteTimeUtc)//double check
+                        {
+                            //remote file is newer so download the file
+                            _fileDownloader.DownloadFile(localFileName);
+                        }
+                    }
                 }
             }
 

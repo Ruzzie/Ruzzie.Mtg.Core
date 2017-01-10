@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Ruzzie.Mtg.Core.IO;
@@ -51,6 +53,45 @@ namespace Ruzzie.Mtg.Core.UnitTests.IO
 
             //Assert
             mockDownloader.Verify();
+        }
+
+        [Test]
+        public void MultipleThreadAccessSmokeTest()
+        {
+            //Arrange
+            string filename = Guid.NewGuid() + ".json";
+            File.Create(filename).Close(); //touch new file       
+
+            IFileDownloader fileDownloader = new BlockingFileDownloaderForTesting(new RemoteFileMetaData { LastModifiedTimeUtc = DateTime.UtcNow.AddYears(1) },10);
+
+            IRemoteFileLoader remoteFileLoader = new RemoteFileLoader(fileDownloader, filename, ".\\");
+            //Act
+            Parallel.For(0, 100, (i) =>
+            {
+                remoteFileLoader.GetLocalOrDownloadIfNewer();
+            });           
+        }
+
+        class BlockingFileDownloaderForTesting : IFileDownloader
+        {
+            private readonly int _downloadBlockingTimeInMillis;
+
+            public BlockingFileDownloaderForTesting(IRemoteFileMetaData metaDataToReturn, int downloadBlockingTimeInMillis)
+            {
+                _downloadBlockingTimeInMillis = downloadBlockingTimeInMillis;
+                MetaData = metaDataToReturn;
+            }
+
+            public void DownloadFile(string localPathToStoreFile)
+            {
+                // ReSharper disable once UnusedVariable
+                using (var fs = File.OpenWrite(localPathToStoreFile))
+                {
+                    Thread.Sleep(_downloadBlockingTimeInMillis);
+                }
+            }
+
+            public IRemoteFileMetaData MetaData { get; }
         }
 
         [Test]
