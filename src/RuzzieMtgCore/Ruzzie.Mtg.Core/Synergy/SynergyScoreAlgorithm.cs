@@ -12,6 +12,8 @@ namespace Ruzzie.Mtg.Core.Synergy
         /// </summary>
         public const float Epsilon = 0.00001F;
 
+        private const int MaxScore = 10;
+
         /// <summary>
         /// Determines whether this instance is zero whitin the tolerance of <see cref="Epsilon"/>
         /// </summary>
@@ -66,9 +68,14 @@ namespace Ruzzie.Mtg.Core.Synergy
 
             float newScore = currentScore;
 
-            if (currentScore < 10)
+            if (currentScore < MaxScore)
             {
                 newScore = currentScore + totalIncrement;
+            }
+
+            if (newScore > MaxScore)
+            {
+                return MaxScore;
             }
 
             return newScore;

@@ -12,6 +12,8 @@ namespace Ruzzie.Mtg.Core.UnitTests.Synergy
         [TestCase(0.99999F, 0F, 0.99999F)]
         [TestCase(0.01F, 1F, 1.00999999f)]
         [TestCase(0F, 1F, 1F)]
+        [TestCase(9.9999999999999999999F, 1F, 10F)]
+        [TestCase(10F, 1F, 10F)]
         public void TestScoreIncrement(float score, float increment, float expected)
         {
             Assert.That(score.IncrementSynergyScore(increment), Is.EqualTo(expected));
@@ -26,7 +28,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.Synergy
         [Test]
         public void ScoreCannotBeGreaterThat10()
         {
-            Assert.That(10F.IncrementSynergyScore(), Is.LessThanOrEqualTo(10F));
+            Assert.That(11F.IncrementSynergyScore(), Is.LessThanOrEqualTo(10F));
         }
     }
 }
