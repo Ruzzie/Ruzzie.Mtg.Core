@@ -70,6 +70,7 @@
     <Compile Include="EnumFlagHelperTests.cs" />
     <Compile Include="IO\RemoteFileLoaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Synergy\SynergyScoreAlgorithmTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
