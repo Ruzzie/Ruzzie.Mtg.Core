@@ -9,27 +9,27 @@ namespace Ruzzie.Mtg.Core
     public enum Color
     {
         /// <summary>
-        /// No color or identity is set, this means colorless.
+        /// No color or identity is set, this means colorless. (0)
         /// </summary>
         Colorless = 0,
         /// <summary>
-        /// White
+        /// White (1)
         /// </summary>
         W = 1,
         /// <summary>
-        /// Blue
+        /// Blue (2)
         /// </summary>
         U = 2,
         /// <summary>
-        /// Black
+        /// Black (4)
         /// </summary>
         B = 4,
         /// <summary>
-        /// Green
+        /// Green (8)
         /// </summary>
         G = 8,
         /// <summary>
-        /// Red
+        /// Red (16)
         /// </summary>
         R = 16,          
     }

@@ -58,6 +58,7 @@
     <Compile Include="Data\IHasName.cs" />
     <Compile Include="Data\INameLookupResult.cs" />
     <Compile Include="Data\LookupMatchResult.cs" />
+    <Compile Include="Data\NameLookupResult.cs" />
     <Compile Include="EnumFlagHelpers.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="Formats.cs" />

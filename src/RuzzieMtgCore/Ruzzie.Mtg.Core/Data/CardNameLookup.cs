@@ -49,14 +49,14 @@ namespace Ruzzie.Mtg.Core.Data
         {
             if (string.IsNullOrWhiteSpace(name))
             {                
-                return new LookupResult<TCard> { MatchResult = LookupMatchResult.NoMatch };
+                return new NameLookupResult<TCard> { MatchResult = LookupMatchResult.NoMatch };
             }
 
             name = name.Trim();
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                return new LookupResult<TCard> { MatchResult = LookupMatchResult.NoMatch };
+                return new NameLookupResult<TCard> { MatchResult = LookupMatchResult.NoMatch };
             }
 
             return LookupCardByName(name);
@@ -71,7 +71,7 @@ namespace Ruzzie.Mtg.Core.Data
                 listedCard = Search(cardname);
             }
 
-            var lookupResult = new LookupResult<TCard>();
+            var lookupResult = new NameLookupResult<TCard>();
             lookupResult.ResultObject = listedCard;
 
             if (_comparer.Equals(listedCard, Empty))
@@ -83,12 +83,6 @@ namespace Ruzzie.Mtg.Core.Data
                 lookupResult.MatchResult = LookupMatchResult.Match;
             }
             return lookupResult;
-        }
-
-        private class LookupResult<T> : INameLookupResult<T>
-        {
-            public T ResultObject { get; set; }
-            public LookupMatchResult MatchResult { get; set; }
         }
 
         private TCard Search(string cardname)

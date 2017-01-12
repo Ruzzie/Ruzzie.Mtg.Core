@@ -9,39 +9,40 @@ namespace Ruzzie.Mtg.Core
     public enum BasicType
     {
         /// <summary>
-        /// Default: No type.
+        /// Default: No type. (0)
         /// </summary>
         None = 0,
+        //TODO: ADD 1
         /// <summary>
-        /// Artifact
+        /// Artifact, (2)
         /// </summary>
         Artifact = 2,
         /// <summary>
-        /// Creature
+        /// Creature, (4)
         /// </summary>
         Creature = 4,
         /// <summary>
-        /// Enchantment
+        /// Enchantment, (8)
         /// </summary>
         Enchantment = 8,
         /// <summary>
-        /// Instant
+        /// Instant, (16)
         /// </summary>
         Instant = 16,
         /// <summary>
-        /// Sorcery
+        /// Sorcery, (32)
         /// </summary>
         Sorcery = 32,
         /// <summary>
-        /// Basic land
+        /// Basic land, (64)
         /// </summary>
         BasicLand = 64,
         /// <summary>
-        /// Land, or non basic land
+        /// Land, (128)
         /// </summary>
         Land = 128,
         /// <summary>
-        /// Planeswalker
+        /// Planeswalker, (256)
         /// </summary>
         Planeswalker = 256    
     }

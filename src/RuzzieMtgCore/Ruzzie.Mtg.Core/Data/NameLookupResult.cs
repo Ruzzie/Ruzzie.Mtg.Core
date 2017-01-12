@@ -1,10 +1,11 @@
-﻿namespace Ruzzie.Mtg.Core.Data
+namespace Ruzzie.Mtg.Core.Data
 {
     /// <summary>
-    /// Defines the result of a lookup for object of type {T}  by name;
+    /// Name lookup result.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface INameLookupResult<out T>
+    /// <seealso cref="Data.INameLookupResult{T}" />
+    public class NameLookupResult<T> : INameLookupResult<T> where T : IHasName
     {
         /// <summary>
         /// When found the object, null or default otherwise.
@@ -12,13 +13,13 @@
         /// <value>
         /// The result object.
         /// </value>
-        T ResultObject { get; }
+        public T ResultObject { get; set; }
         /// <summary>
         /// Gets or sets the match result.
         /// </summary>
         /// <value>
         /// The match result.
         /// </value>
-        LookupMatchResult MatchResult { get; set; }
+        public LookupMatchResult MatchResult { get; set; }
     }
 }
