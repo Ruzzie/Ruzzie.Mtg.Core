@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Ruzzie.FuzzyStrings;
 using Ruzzie.Mtg.Core.Data;
 
-namespace Ruzzie.Mtg.Core.UnitTests
+namespace Ruzzie.Mtg.Core.UnitTests.Data
 {
     [TestFixture]
     public class CardNameLookupTests

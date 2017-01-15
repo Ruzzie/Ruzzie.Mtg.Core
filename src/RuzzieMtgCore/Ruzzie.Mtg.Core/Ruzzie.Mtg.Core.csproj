@@ -32,12 +32,12 @@
     <DocumentationFile>bin\Release\Ruzzie.Mtg.Core.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ruzzie.Caching, Version=0.12.94.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ruzzie.Cache.FlashCache.0.12.94\lib\net461\Ruzzie.Caching.dll</HintPath>
+    <Reference Include="Ruzzie.Caching, Version=1.12.97.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.Cache.FlashCache.1.12.97\lib\net461\Ruzzie.Caching.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ruzzie.Common, Version=0.8.32.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ruzzie.Common.0.8.32\lib\net461\Ruzzie.Common.dll</HintPath>
+    <Reference Include="Ruzzie.Common, Version=0.8.35.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.Common.0.8.35\lib\net461\Ruzzie.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ruzzie.FuzzyStrings, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="BasicType.cs" />
     <Compile Include="BasicTypes.cs" />
+    <Compile Include="KeyHelpers.cs" />
     <Compile Include="Colors.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Data\CardNameLookup.cs" />

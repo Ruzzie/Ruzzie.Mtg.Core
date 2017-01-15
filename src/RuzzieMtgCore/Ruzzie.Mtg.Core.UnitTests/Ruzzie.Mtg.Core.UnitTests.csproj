@@ -42,12 +42,12 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ruzzie.Caching, Version=0.12.94.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ruzzie.Cache.FlashCache.0.12.94\lib\net461\Ruzzie.Caching.dll</HintPath>
+    <Reference Include="Ruzzie.Caching, Version=1.12.97.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.Cache.FlashCache.1.12.97\lib\net461\Ruzzie.Caching.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ruzzie.Common, Version=0.8.32.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ruzzie.Common.0.8.32\lib\net461\Ruzzie.Common.dll</HintPath>
+    <Reference Include="Ruzzie.Common, Version=0.8.35.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.Common.0.8.35\lib\net461\Ruzzie.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ruzzie.FuzzyStrings, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -65,9 +65,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicTypesTests.cs" />
-    <Compile Include="CardNameLookupTests.cs" />
+    <Compile Include="Data\CardNameLookupTests.cs" />
     <Compile Include="ColorsTests.cs" />
     <Compile Include="EnumFlagHelperTests.cs" />
+    <Compile Include="GenerateBidirectonalKeyForTwoCardNameComparisonsTests.cs" />
+    <Compile Include="GenerateBidirectonalKeyForTwoStringComparisonsTests.cs" />
     <Compile Include="IO\RemoteFileLoaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Synergy\SynergyScoreAlgorithmTests.cs" />
