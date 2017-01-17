@@ -36,8 +36,8 @@
       <HintPath>..\packages\Ruzzie.Cache.FlashCache.1.12.97\lib\net461\Ruzzie.Caching.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ruzzie.Common, Version=0.8.35.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ruzzie.Common.0.8.35\lib\net461\Ruzzie.Common.dll</HintPath>
+    <Reference Include="Ruzzie.Common, Version=0.9.36.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ruzzie.Common.0.9.36\lib\net461\Ruzzie.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ruzzie.FuzzyStrings, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">

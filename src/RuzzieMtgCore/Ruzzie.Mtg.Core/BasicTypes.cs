@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Ruzzie.Common.Collections;
 
 namespace Ruzzie.Mtg.Core
 {
@@ -9,6 +13,35 @@ namespace Ruzzie.Mtg.Core
     public static class BasicTypes
     {
         private static readonly ConcurrentDictionary<string,BasicType> EnumNameCache = new ConcurrentDictionary<string, BasicType>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// All Basic land card names uppercased.
+        /// A readonly <see cref="ReadOnlySet{String}"/> wrapped around a <see cref="HashSet{String}"/> for fast lookup.
+        /// "ISLAND", "PLAINS", "SWAMP", "FOREST", "MOUNTAIN", "SNOW-COVERED ISLAND", "SNOW-COVERED PLAINS", "SNOW-COVERED SWAMP", "SNOW-COVERED FOREST", "SNOW-COVERED MOUNTAIN", "WASTES"
+        /// </summary>
+        public static readonly ReadOnlySet<string> BasicLandCardNames = new ReadOnlySet<string>(new HashSet<string>(new[] { "ISLAND", "PLAINS", "SWAMP", "FOREST", "MOUNTAIN", "SNOW-COVERED ISLAND", "SNOW-COVERED PLAINS", "SNOW-COVERED SWAMP", "SNOW-COVERED FOREST", "SNOW-COVERED MOUNTAIN", "WASTES" }, StringComparer.OrdinalIgnoreCase));
+
+        /// <summary>
+        /// A collection of all single values of the possible <see cref="BasicType"/>s.
+        /// </summary>
+        public static readonly ReadOnlyCollection<BasicType> AllBasicCardTypes = new ReadOnlyCollection<BasicType>(EnumFlagHelpers<BasicType>.ListAllSingleValues().ToList());
+
+        /// <summary>
+        /// A Set of all single values of the possible <see cref="BasicType"/>s.
+        /// A readonly <see cref="ReadOnlySet{String}"/> wrapped around a <see cref="HashSet{String}"/> for fast lookup.
+        /// </summary>
+        public static readonly ReadOnlySet<BasicType> AllBasicCardTypesSet = new ReadOnlySet<BasicType>(AllBasicCardTypes);
+
+#pragma warning disable 1591
+        public const string Artifact = "Artifact";
+        public const string Creature = "Creature";
+        public const string BasicLand = "Basic Land";
+        public const string Instant = "Instant";
+        public const string Enchantment = "Enchantment";
+        public const string Planeswalker = "Planeswalker";
+        public const string Sorcery = "Sorcery";
+        public const string Land = "Land";
+#pragma warning restore 1591
 
         /// <summary>
         /// Parses a string with al the types and returns a <see cref="BasicType"/> enum for all matching basic types.
