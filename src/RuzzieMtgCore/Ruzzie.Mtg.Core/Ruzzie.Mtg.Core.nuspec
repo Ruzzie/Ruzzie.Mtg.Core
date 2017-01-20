@@ -10,16 +10,39 @@
     <projectUrl>https://github.com/Ruzzie/Ruzzie.Mtg.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Some shared types for my Mtg project</description>
-    <copyright>Copyright 2016</copyright>
+    <copyright>Copyright © Dorus Verhoeckx 2017</copyright>
     <!--tags></tags-->
-	  <dependencies>
-      <dependency id="Ruzzie.Common" version="(0.8.35,)" />
-      <dependency id="Ruzzie.FuzzyStrings" version="(1.0.7,)" />
+	<dependencies>
+      <group targetFramework=".NETCoreApp1.0">
+        <dependency id="Ruzzie.Cache.FlashCache" version="[2.0.101, )" />
+        <dependency id="Ruzzie.Common" version="[1.0.49, )" />
+        <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />
+      </group>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="Ruzzie.Cache.FlashCache" version="[2.0.101, )" />
+        <dependency id="Ruzzie.Common" version="[1.0.49, )" />
+        <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />
+      </group>
+      <group targetFramework=".NETFramework4.6">
+        <dependency id="Ruzzie.Cache.FlashCache" version="[2.0.101, )" />
+        <dependency id="Ruzzie.Common" version="[1.0.49, )" />
+        <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />
+      </group>
+      <group targetFramework=".NETFramework4.6.1">
+        <dependency id="Ruzzie.Cache.FlashCache" version="[2.0.101, )" />
+        <dependency id="Ruzzie.Common" version="[1.0.49, )" />
+        <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />
+      </group>
+      <group targetFramework=".NETStandard1.6">
+        <dependency id="Ruzzie.Cache.FlashCache" version="[2.0.101, )" />
+        <dependency id="Ruzzie.Common" version="[1.0.49, )" />
+        <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />
+      </group>
     </dependencies>
   </metadata>
   
    <files>
 		<file src="..\..\..\LICENSE" />
-		<file src="bin\Release\*Ruzzie.Mtg.Core*.*" target="lib\net461\"/>  
+		<file src="bin\Release\" target="lib\" exclude="**\Ruzzie.Common.*;**\Ruzzie.Caching.*;**\Ruzzie.FuzzyStrings.*"/>  
     </files>
 </package>

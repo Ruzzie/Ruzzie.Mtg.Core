@@ -528,7 +528,7 @@ namespace Ruzzie.Mtg.Core.Data
         private TCard FindCardByExactName(string cardname)
         {
             TCard firstOrDefault = _allCards
-                .FirstOrDefault(card => string.Equals(card.Name, cardname, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(card => string.Equals(card.Name, cardname, StringComparison.OrdinalIgnoreCase));
 
             return firstOrDefault;
         }

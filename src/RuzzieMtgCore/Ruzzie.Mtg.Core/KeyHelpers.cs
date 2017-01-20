@@ -62,7 +62,9 @@ namespace Ruzzie.Mtg.Core
         /// <param name="firstUlong">The first ulong.</param>
         /// <param name="secondUlong">The second ulong.</param>
         /// <returns></returns>
+#if !PORTABLE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static ulong GenerateBidirectonalKeyForTwoULongs(this ulong firstUlong, ulong secondUlong)
         {
             unchecked
@@ -76,7 +78,9 @@ namespace Ruzzie.Mtg.Core
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
+#if !PORTABLE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static ulong GenerateHash64ForStringCaseInsensitive(this string value )
         {
             return (ulong) HashAlgo64.HashStringCaseInsensitive(value);

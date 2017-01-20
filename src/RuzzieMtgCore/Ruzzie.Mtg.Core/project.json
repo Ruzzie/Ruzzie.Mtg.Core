@@ -1,0 +1,45 @@
+﻿{
+  "version": "1.0.0-*",
+  "title": "Ruzzie.Mtg.Core",
+  "description": "Some shared types for my Mtg project",
+  "language": "en-US",
+  "authors": [ "Dorus Verhoeckx" ],
+  "copyright": "Copyright © Dorus Verhoeckx 2017",
+  "packOptions": {
+    "projectUrl": "https://github.com/Ruzzie/Ruzzie.Mtg.Core",
+    "licenseUrl": "https://github.com/Ruzzie/Ruzzie.Mtg.Core/blob/master/LICENSE",
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/Ruzzie/Ruzzie.Mtg.Core"
+    }
+  },
+  "dependencies": {
+    "Ruzzie.Cache.FlashCache": "2.0.101",
+    "Ruzzie.Common": "1.0.49",
+    "Ruzzie.FuzzyStrings": "2.0.12"
+  },
+  "frameworks": {
+    "net46": {
+      "buildOptions": {
+        "define": [ "HAVE_SERIALIZABLE", "HAVE_STRINGINTERN", "HAVE_FULL_REFLECTION" ]
+      },
+      "frameworkAssemblies": {
+      },
+      "dependencies": {
+      }
+    },
+    "net461": {
+      "buildOptions": {
+        "define": [ "HAVE_SERIALIZABLE", "HAVE_STRINGINTERN", "HAVE_FULL_REFLECTION" ]
+      },
+      "frameworkAssemblies": {
+      },
+      "dependencies": {
+      }
+    }
+  },
+  "buildOptions": {
+    "xmlDoc": true,
+    "optimize": true
+  }
+}
