@@ -44,8 +44,11 @@ namespace Ruzzie.Mtg.Core
             {
                 return Color.Colorless;
             }
-
+#if HAVE_STRINGINTERN
             return EnumNameCache.GetOrAdd(string.Intern(colorsString), FromUncached);
+#else
+             return EnumNameCache.GetOrAdd(colorsString, FromUncached);
+#endif
         }
 
         /// <summary>

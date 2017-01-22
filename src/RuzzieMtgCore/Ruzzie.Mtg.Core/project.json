@@ -19,6 +19,17 @@
     "Ruzzie.FuzzyStrings": "2.0.12"
   },
   "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ],
+      "dependencies": {
+      }
+    },
+    "netstandard1.6": {
+      
+    },
     "net46": {
       "buildOptions": {
         "define": [ "HAVE_SERIALIZABLE", "HAVE_STRINGINTERN", "HAVE_FULL_REFLECTION" ]

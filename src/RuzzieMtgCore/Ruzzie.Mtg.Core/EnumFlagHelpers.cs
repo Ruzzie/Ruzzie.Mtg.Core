@@ -83,7 +83,7 @@ namespace Ruzzie.Mtg.Core
 
         private static EnumTypeInfo GetEnumTypeInfo(Type type)
         {
-            EnumTypeInfo enumTypeInfo = new EnumTypeInfo {IsEnum = type.IsEnum, HasFlagsAttribute = type.GetCustomAttribute(typeof(FlagsAttribute)) != null};
+            EnumTypeInfo enumTypeInfo = new EnumTypeInfo {IsEnum = type.IsEnum(), HasFlagsAttribute = type.GetCustomAttributeForType(typeof(FlagsAttribute)) != null};
 
             if (enumTypeInfo.IsEnum)
             {

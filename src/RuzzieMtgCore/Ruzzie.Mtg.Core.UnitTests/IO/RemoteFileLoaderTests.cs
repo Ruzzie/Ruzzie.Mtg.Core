@@ -16,7 +16,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.IO
         {
             //Arrange
             string filename = Guid.NewGuid() + ".json";
-            File.Create(filename).Close(); //touch new file
+            File.Create(filename).Dispose(); //touch new file
 
             Mock<IFileDownloader> mockDownloader = new Mock<IFileDownloader>(MockBehavior.Strict);
             mockDownloader.Setup(downloader => downloader.MetaData)
@@ -38,7 +38,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.IO
         {
             //Arrange
             string filename = Guid.NewGuid() + ".json";
-            File.Create(filename).Close(); //touch new file
+            File.Create(filename).Dispose(); //touch new file
 
             Mock<IFileDownloader> mockDownloader = new Mock<IFileDownloader>(MockBehavior.Strict);
             mockDownloader.Setup(downloader => downloader.MetaData).Returns(new RemoteFileMetaData {LastModifiedTimeUtc = DateTime.UtcNow.AddYears(1)});
@@ -60,7 +60,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.IO
         {
             //Arrange
             string filename = Guid.NewGuid() + ".json";
-            File.Create(filename).Close(); //touch new file       
+            File.Create(filename).Dispose(); //touch new file       
 
             IFileDownloader fileDownloader = new BlockingFileDownloaderForTesting(new RemoteFileMetaData { LastModifiedTimeUtc = DateTime.UtcNow.AddYears(1) },10);
 
