@@ -25,10 +25,27 @@ namespace Ruzzie.Mtg.Core.Data
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CardNameLookup{TCard}" /> class.
+        /// </summary>
+        /// <param name="typeWithAllCards">The type with all cards.</param>
+        public CardNameLookup(IHasQuerableAllCards<TCard> typeWithAllCards): this(typeWithAllCards.AllCards)
+        {            
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CardNameLookup{TCard}" /> class.
+        /// </summary>
+        /// <param name="typeWithAllCards">The type with all cards.</param>
+        /// <param name="comparer">The comparer to use to compare whith default (notfound) value. This is not used for cardname comparisons.</param>
+        public CardNameLookup(IHasQuerableAllCards<TCard> typeWithAllCards, IEqualityComparer<TCard> comparer) : this(typeWithAllCards.AllCards, comparer)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CardNameLookup{TCard}"/> class.
         /// </summary>
         /// <param name="allCards">All cards.</param>
-        /// <param name="comparer">The comparer.</param>
+        /// <param name="comparer">The comparer to use to compare whith default (notfound) value. This is not used for cardname comparisons.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public CardNameLookup(IQueryable<TCard> allCards, IEqualityComparer<TCard> comparer)
         {

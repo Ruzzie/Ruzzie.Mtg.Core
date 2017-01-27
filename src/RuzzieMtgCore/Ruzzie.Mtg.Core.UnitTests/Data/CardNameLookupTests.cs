@@ -15,11 +15,19 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         [Test]
         public void SmokeTest()
         {
-           //Act
+            //Act
             var result = _cardNameLookup.FindCardByName("lim d l s vault");
 
             //Assert
             Assert.That(result.ResultObject.Name, Is.EqualTo("Lim-Dûl's Vault"));
+        }
+
+        [Test]
+        public void CtorTest()
+        {
+           var typeWithIHasAllCardsProperty = new TestCardContainer();
+            // ReSharper disable once ObjectCreationAsStatement
+           new CardNameLookup<TestCard>(typeWithIHasAllCardsProperty);
         }
 
         [TestCase("dack fayden", "Dack Fayden")]
@@ -138,9 +146,14 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             };
         }
 
-        private class TestCard : IHasName
+        public class TestCard : IHasName
         {
             public string Name { get; set; }
+        }
+
+        public class TestCardContainer : IHasQuerableAllCards<TestCard>
+        {
+            public IQueryable<TestCard> AllCards { get { return CreateAllCardsTestList().AsQueryable(); } }
         }
     }
 }

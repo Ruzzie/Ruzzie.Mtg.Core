@@ -31,6 +31,7 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("A", "A", 6490070733419165712UL)]
         [TestCase("Urborg Justice", "Skyshroud Forest", 7481129173139490781UL)]
         [TestCase("Oloro, Ageless Ascetic", "Oloro, Ageless Ascetic", 4628074897764172800UL)]
+        [TestCase("Onslaught", "Dragon Whisperer", 18369797859162359993UL)]
         public void ValueRegressionTest(string a, string b, ulong expected)
         {
             ulong firstKey = a.GenerateBidirectonalKeyForTwoCardNameComparisons(b);
