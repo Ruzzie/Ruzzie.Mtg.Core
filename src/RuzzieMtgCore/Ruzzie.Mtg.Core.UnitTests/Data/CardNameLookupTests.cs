@@ -71,14 +71,26 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         [TestCase("Rakdos Return", "Rakdos's Return")]
         [TestCase("Rakdos's Return", "Rakdos's Return")]
         [TestCase("Rakdos's Returns", "Rakdos's Return")]
+        //some keymatches
+        [TestCase("FAR __ AWAY", "Far // Away")]
+        [TestCase("GIANT GROWTH", "Giant Growth")]
         //Some Fuzzy matching tests
         [TestCase("Raakdoos Returns", "Rakdos's Return")]
         [TestCase("Aethersprouts", "Aetherspouts")]
         [TestCase("jotun grunt", "Jötun Grunt")]
-        [TestCase("men o war", "Man-o'-War")]
+        [TestCase("men o war", "Man-o'-War")]        
         public void FindCardTests(string searchCardName, string actualName)
         {
             //Arrange           
+            TestCard findCardByName = _cardNameLookup.FindCardByName(searchCardName).ResultObject;
+            Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
+        }
+
+        [Test]
+        [TestCase("Giant Gowth", "Giant Growth")]
+        [TestCase("Giant Ortoise", "Giant Tortoise")]
+        public void FuzzyMatchTestAndOrdering(string searchCardName, string actualName)
+        {
             TestCard findCardByName = _cardNameLookup.FindCardByName(searchCardName).ResultObject;
             Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
         }
@@ -136,13 +148,16 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
                 new TestCard {Name = "Circle of Protection: Black"},
                 new TestCard {Name = "Will-o'-the-Wisp"},
                 new TestCard {Name = "Scion of Vitu-Ghazi"},
-                new TestCard {Name = "Scion of Vitu-Ghazi"},
+                new TestCard {Name = "Scion of Vitu-Ghazi"},//nice to see if distinct selection works
                 new TestCard {Name = "Silvergill Adept"},
                 new TestCard {Name = "Snapcaster Mage"},
                 new TestCard {Name = "Gideon, Ally of Zendikar"},
                 new TestCard {Name = "Mina and Denn, Wildborn"},
                 new TestCard {Name = "Turn // Burn"},
-                new TestCard {Name = "Rakdos's Return"}
+                new TestCard {Name = "Rakdos's Return"},
+                new TestCard {Name = "Giant Tortoise"},
+                new TestCard {Name = "Giant Growth"},
+                new TestCard {Name = "Far // Away"}
             };
         }
 

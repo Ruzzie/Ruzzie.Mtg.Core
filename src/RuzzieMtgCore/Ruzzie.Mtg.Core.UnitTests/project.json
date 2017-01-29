@@ -6,7 +6,8 @@
     "NUnit": "3.5.0",
     "Moq": "4.6.38-*",
     "NUnit.Console": "3.5.0",
-    "Ruzzie.Mtg.Core": "1.0.0-*"
+    "Ruzzie.Mtg.Core": "1.0.0-*",
+    "FluentAssertions": "4.18.0"
   },
   "frameworks": {
     "netcoreapp1.0": {

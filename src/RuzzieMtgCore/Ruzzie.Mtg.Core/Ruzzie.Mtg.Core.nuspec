@@ -14,6 +14,7 @@
     <!--tags></tags-->
 	<dependencies>
       <group targetFramework=".NETCoreApp1.0">
+	    <dependency id="System.Linq.Queryable" version="[4.3.0, )" />
         <dependency id="Ruzzie.Cache.FlashCache" version="[2.0.101, )" />
         <dependency id="Ruzzie.Common" version="[1.0.49, )" />
         <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />
@@ -34,6 +35,7 @@
         <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />
       </group>
       <group targetFramework=".NETStandard1.6">
+	    <dependency id="System.Linq.Queryable" version="[4.3.0, )" />
         <dependency id="Ruzzie.Cache.FlashCache" version="[2.0.101, )" />
         <dependency id="Ruzzie.Common" version="[1.0.49, )" />
         <dependency id="Ruzzie.FuzzyStrings" version="[2.0.12, )" />

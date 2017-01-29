@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Ruzzie.Common.Hashing;
 using Ruzzie.FuzzyStrings;
 
 namespace Ruzzie.Mtg.Core.Data
@@ -12,9 +14,10 @@ namespace Ruzzie.Mtg.Core.Data
     /// <seealso cref="ICardNameLookup{TCard}" />
     public class CardNameLookup<TCard> : ICardNameLookup<TCard> where TCard : IHasName
     {
-        private readonly IQueryable<TCard> _allCards;
         private readonly IEqualityComparer<TCard> _comparer;
         private static readonly TCard Empty = default(TCard);
+
+        private readonly ICardNameLookupRepository<TCard> _lookupRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CardNameLookup{TCard}"/> class.
@@ -53,10 +56,12 @@ namespace Ruzzie.Mtg.Core.Data
             {
                 throw new ArgumentNullException(nameof(allCards));
             }
-            _allCards = allCards;
+
+            _lookupRepository = new CardNameLookupRepository<TCard>(allCards);
+
             _comparer = comparer;
         }
-        
+    
         /// <summary>
         /// Finds object matching the (casinsensitive) name. If an empty string is passed (also after a trim). The default(TCard) is returned.
         /// </summary>
@@ -81,7 +86,7 @@ namespace Ruzzie.Mtg.Core.Data
 
         private INameLookupResult<TCard> LookupCardByName(string cardname)
         {
-            TCard listedCard = FindCardByExactName(cardname);
+            TCard listedCard = _lookupRepository.FindCardByExactName(cardname);
 
             if (_comparer.Equals(listedCard, Empty))
             {
@@ -104,17 +109,17 @@ namespace Ruzzie.Mtg.Core.Data
 
         private TCard Search(string cardname)
         {
-            TCard listedCard = FindCardByExactName(cardname.Replace(" s ", "\'s ").Replace(" / "," // "));
-
+            TCard listedCard = _lookupRepository.FindCardByExactName(cardname.Replace(" s ", "\'s ").Replace(" / "," // "));
+           
             if ( _comparer.Equals(listedCard,Empty))
             {
                 string synonym = GetSynonym(cardname);
                 if (synonym != null)
                 {
-                    listedCard = FindCardByExactName(synonym);
+                    listedCard = _lookupRepository.FindCardByExactName(synonym);
                 }
             }
-
+                    
             cardname = cardname.Replace(" s ", "\'s ");
 
             if ( _comparer.Equals(listedCard,Empty))
@@ -122,7 +127,7 @@ namespace Ruzzie.Mtg.Core.Data
                 var cardWithCommaAfterFirstWord = AddCommaAfterFirstWordIfNoCommaPresent(cardname);
                 if (cardWithCommaAfterFirstWord != cardname)
                 {
-                    listedCard = FindCardByExactName(cardWithCommaAfterFirstWord);
+                    listedCard = _lookupRepository.FindCardByExactName(cardWithCommaAfterFirstWord);
                 }
             }
 
@@ -131,7 +136,7 @@ namespace Ruzzie.Mtg.Core.Data
                 var cardWithCommaAfterSecondWord = AddCommaAfterSecondWordIfNoCommaPresent(cardname);
                 if (cardWithCommaAfterSecondWord != cardname)
                 {
-                    listedCard = FindCardByExactName(cardWithCommaAfterSecondWord);
+                    listedCard = _lookupRepository.FindCardByExactName(cardWithCommaAfterSecondWord);
                 }
             }
 
@@ -140,16 +145,16 @@ namespace Ruzzie.Mtg.Core.Data
                 var cardWithCommaAfterThirdWord = AddCommaAfterThirdWordIfNoCommaPresent(cardname);
                 if (cardWithCommaAfterThirdWord != cardname)
                 {
-                    listedCard = FindCardByExactName(cardWithCommaAfterThirdWord);
+                    listedCard = _lookupRepository.FindCardByExactName(cardWithCommaAfterThirdWord);
                 }
             }
 
             if ( _comparer.Equals(listedCard,Empty) && cardname.Contains("ther"))
             {
-                listedCard = FindCardByExactName(cardname.Replace("ther", "Aether"));
+                listedCard = _lookupRepository.FindCardByExactName(cardname.Replace("ther", "Aether"));
                 if ( _comparer.Equals(listedCard,Empty))
                 {
-                    listedCard = FindCardByExactName(cardname.Replace("ther", "Æther"));
+                    listedCard = _lookupRepository.FindCardByExactName(cardname.Replace("ther", "Æther"));
                 }
             }
 
@@ -172,7 +177,7 @@ namespace Ruzzie.Mtg.Core.Data
                 {
                     words[0] = words[0].Replace("\'s", "s\'");
                     string cardWithApostropheAddedAfterfirstWord = string.Join(" ", words);
-                    listedCard = FindCardByExactName(cardWithApostropheAddedAfterfirstWord);
+                    listedCard = _lookupRepository.FindCardByExactName(cardWithApostropheAddedAfterfirstWord);
 
                     if ( _comparer.Equals(listedCard,Empty))
                     {
@@ -208,7 +213,7 @@ namespace Ruzzie.Mtg.Core.Data
                         {
                             words[i] = words[i].Replace("s", "");
                             string cardWithWordThatEndsInSRemovedS = string.Join(" ", words);
-                            listedCard = FindCardByExactName(cardWithWordThatEndsInSRemovedS);
+                            listedCard = _lookupRepository.FindCardByExactName(cardWithWordThatEndsInSRemovedS);
 
                             if (_comparer.Equals(listedCard, Empty))
                             {
@@ -222,13 +227,11 @@ namespace Ruzzie.Mtg.Core.Data
             //Lastly do a full fuzzy match
             if (_comparer.Equals(listedCard, Empty))
             {
-                listedCard = FindCardByFuzzyMatch(cardname);
+                listedCard = _lookupRepository.FindCardByFuzzyMatch(cardname);
             }
 
             return listedCard;
         }
-
-     
 
         private TCard TryFindByVariatingCharacterOnEndOfWord(TCard listedCard, string[] words, int i, string wordEndsWith, string afterWordWithCharacherString)
         {
@@ -236,7 +239,7 @@ namespace Ruzzie.Mtg.Core.Data
             {
                 words[i] = words[i] + afterWordWithCharacherString;
                 string cardWithApostrophesAddedAfterWord = string.Join(" ", words);
-                listedCard = FindCardByExactName(cardWithApostrophesAddedAfterWord);
+                listedCard = _lookupRepository.FindCardByExactName(cardWithApostrophesAddedAfterWord);
 
                 if (_comparer.Equals(listedCard, Empty))
                 {
@@ -252,11 +255,11 @@ namespace Ruzzie.Mtg.Core.Data
             if (words.Length == 2)
             {
                 //check if dual card
-                listedCard = FindCardByExactName(string.Join(" // ", words));
+                listedCard = _lookupRepository.FindCardByExactName(string.Join(" // ", words));
 
                 if ( _comparer.Equals(listedCard,Empty))
                 {
-                    listedCard = FindCardByExactName(string.Join("-", words));
+                    listedCard = _lookupRepository.FindCardByExactName(string.Join("-", words));
                 }
             }
 
@@ -273,9 +276,8 @@ namespace Ruzzie.Mtg.Core.Data
             if ( _comparer.Equals(listedCard,Empty) && words.Length > 2)
             {
                 //hyphen all words
-                listedCard = FindCardByExactName(string.Join("-", words));
+                listedCard = _lookupRepository.FindCardByExactName(string.Join("-", words));
             }
-
 
             if ( _comparer.Equals(listedCard,Empty) && words.Length > 4)
             {
@@ -295,27 +297,21 @@ namespace Ruzzie.Mtg.Core.Data
 
         private TCard VariateWordsForCardnameWithLengthFour(string[] words)
         {
-            TCard listedCard;
             //check if - is forgotten between words
             //first the most left two words then the right two words
             var leftHyphen = words[0] + "-" + words[1] + " " + words[2] + " " + words[3];
             var rightHyphen = words[0] + " " + words[1] + " " + words[2] + "-" + words[3];
             var middleHyphen = words[0] + " " + words[1] + "-" + words[2] + " " + words[3];
 
-            TCard firstOption = FindCardByExactName(leftHyphen);
-            //Card secondOption = FindCard(rightHyphen);
-            //Card thirdOption = FindCard(middleHyphen);
+            TCard firstOption = _lookupRepository.FindCardByExactName(leftHyphen);
 
             //TODO: Check if optimization is possible, bu not calling all findcards before comparing
-            listedCard = ! _comparer.Equals(firstOption,Empty)? firstOption : FindCardByExactName(rightHyphen); //(secondOption == C)
+            TCard listedCard = !_comparer.Equals(firstOption, Empty) ? firstOption : _lookupRepository.FindCardByExactName(rightHyphen);
 
             if ( _comparer.Equals(listedCard,Empty))
             {
-                listedCard = FindCardByExactName(middleHyphen);
+                listedCard = _lookupRepository.FindCardByExactName(middleHyphen);
             }
-
-            //listedCard = firstOption ?? secondOption ?? thirdOption;
-
 
             if ( _comparer.Equals(listedCard,Empty))
             {
@@ -325,17 +321,17 @@ namespace Ruzzie.Mtg.Core.Data
                 var middleHyphenWithComma = AddCommaAfterFirstWordIfNoCommaPresent(middleHyphen);
                 if (leftHyphenWithComma != leftHyphen)
                 {
-                    listedCard = FindCardByExactName(leftHyphenWithComma);
+                    listedCard = _lookupRepository.FindCardByExactName(leftHyphenWithComma);
                 }
 
                 if ( _comparer.Equals(listedCard,Empty) && rightHyphenWithComma != rightHyphen)
                 {
-                    listedCard = FindCardByExactName(rightHyphenWithComma);
+                    listedCard = _lookupRepository.FindCardByExactName(rightHyphenWithComma);
                 }
 
                 if ( _comparer.Equals(listedCard,Empty) && middleHyphenWithComma != middleHyphen)
                 {
-                    listedCard = FindCardByExactName(middleHyphenWithComma);
+                    listedCard = _lookupRepository.FindCardByExactName(middleHyphenWithComma);
                 }
             }
 
@@ -350,7 +346,7 @@ namespace Ruzzie.Mtg.Core.Data
             {
                 string[] theWords = CombineNextTwoWords(i, words, "-");
                 string hypenedCardname = string.Join(" ", theWords);
-                listedCard = FindCardByExactName(hypenedCardname);
+                listedCard = _lookupRepository.FindCardByExactName(hypenedCardname);
 
                 if ( _comparer.Equals(listedCard,Empty))
                 {
@@ -361,7 +357,7 @@ namespace Ruzzie.Mtg.Core.Data
                         theWords.CopyTo(tmpCardNameWithCommaAfterWord, 0);
                         tmpCardNameWithCommaAfterWord[j] = tmpCardNameWithCommaAfterWord[j] + ",";
 
-                        listedCard = FindCardByExactName(string.Join(" ", tmpCardNameWithCommaAfterWord));
+                        listedCard = _lookupRepository.FindCardByExactName(string.Join(" ", tmpCardNameWithCommaAfterWord));
 
                         if (! _comparer.Equals(listedCard,Empty))
                         {
@@ -382,6 +378,13 @@ namespace Ruzzie.Mtg.Core.Data
         private static string[] CombineNextTwoWords(int startWordIndex, string[] words, string combinator = " ")
         {
             List<string> combined = new List<string>();
+
+            //There is nothing to combine so return original.
+            if (words.Length <= 1 || startWordIndex == words.Length - 1)
+            {
+                return words;
+            }
+
             for (int i = 0; i < words.Length; i++)
             {
                 if (i == startWordIndex)
@@ -409,10 +412,9 @@ namespace Ruzzie.Mtg.Core.Data
             var leftHyphen = words[0] + "-" + words[1] + " " + words[2];
             var rightHyphen = words[0] + " " + words[1] + "-" + words[2];
 
-            TCard firstOption = FindCardByExactName(leftHyphen);
-            TCard listedCard = ! _comparer.Equals(firstOption,Empty) ? firstOption : FindCardByExactName(rightHyphen);
-            //Card listedCard = firstOption ??
-            //                  secondOption;
+            TCard firstOption = _lookupRepository.FindCardByExactName(leftHyphen);
+            TCard listedCard = ! _comparer.Equals(firstOption,Empty) ? firstOption : _lookupRepository.FindCardByExactName(rightHyphen);
+
             if ( _comparer.Equals(listedCard,Empty))
             {
                 //try with , after first word
@@ -420,12 +422,12 @@ namespace Ruzzie.Mtg.Core.Data
                 var rightHyphenWithComma = AddCommaAfterFirstWordIfNoCommaPresent(rightHyphen);
                 if (leftHyphenWithComma != leftHyphen)
                 {
-                    listedCard = FindCardByExactName(leftHyphenWithComma);
+                    listedCard = _lookupRepository.FindCardByExactName(leftHyphenWithComma);
                 }
 
                 if ( _comparer.Equals(listedCard,Empty) && rightHyphenWithComma != rightHyphen)
                 {
-                    listedCard = FindCardByExactName(rightHyphenWithComma);
+                    listedCard = _lookupRepository.FindCardByExactName(rightHyphenWithComma);
                 }
             }
             return listedCard;
@@ -540,24 +542,183 @@ namespace Ruzzie.Mtg.Core.Data
             }
 
             return null;
+        }     
+    }
+
+    internal class CardNameEqualityComparer<TCard> : IEqualityComparer<TCard> where TCard : IHasName
+    {
+        private readonly StringComparer _nameComparerToUse;
+
+        public CardNameEqualityComparer()
+        {
+            _nameComparerToUse = StringComparer.OrdinalIgnoreCase;
         }
 
-        private TCard FindCardByExactName(string cardname)
+        public CardNameEqualityComparer(StringComparer nameComparerToUse)
         {
-            TCard firstOrDefault = _allCards
-                .FirstOrDefault(card => string.Equals(card.Name, cardname, StringComparison.OrdinalIgnoreCase));
+            if (nameComparerToUse == null)
+            {
+                throw new ArgumentNullException(nameof(nameComparerToUse));
+            }
+            _nameComparerToUse = nameComparerToUse;
+        }
+                        
+        public bool Equals(TCard x, TCard y)
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+            if (ReferenceEquals(x, null))
+            {
+                return false;
+            }
+            if (ReferenceEquals(y, null))
+            {
+                return false;
+            }
+            if (x.GetType() != y.GetType())
+            {
+                return false;
+            }
 
-            return firstOrDefault;
+            return _nameComparerToUse.Equals(x.Name, y.Name) ||
+                   _nameComparerToUse.Equals(x.Name.CreateValidUpperCaseKeyForString(), y.Name.CreateValidUpperCaseKeyForString());
         }
 
-        private TCard FindCardByFuzzyMatch(string cardname)
+        public int GetHashCode(TCard obj)
         {
-            TCard firstOrDefault = _allCards
-                .FirstOrDefault(
-                    card => card.Name.FuzzyEquals(cardname, 0.75D, false) || card.Name.RemoveSpecialCharacters().FuzzyEquals(cardname.RemoveSpecialCharacters(),
-                                0.75D, false));
+            return _nameComparerToUse.GetHashCode(obj.Name.CreateValidUpperCaseKeyForString());
+        }
+    }
 
-            return firstOrDefault;
-        }      
+    internal interface ICardNameLookupRepository<out TCard> where TCard : IHasName
+    {
+        TCard FindCardByExactName(string cardname);
+        TCard FindCardByFuzzyMatch(string cardname);
+    }
+
+    internal class CardNameLookupRepository<TCard> : ICardNameLookupRepository<TCard> where TCard : IHasName
+    {  
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly FNV1AHashAlgorithm64 FNV1AHashAlgorithm64 = new FNV1AHashAlgorithm64();
+
+        public CardNameLookupRepository(IQueryable<TCard> allCards)
+        {
+            NameLookupDataSource = new CardNameLookupDataSource<TCard>(allCards);
+        }
+
+        public ICardNameLookupDataSource<TCard> NameLookupDataSource { get; }
+
+        public TCard FindCardByExactName(string cardname)
+        {
+            if (string.IsNullOrWhiteSpace(cardname))
+            {
+                return default(TCard);
+            }        
+
+            long cardNameHash = FNV1AHashAlgorithm64.HashStringCaseInsensitive(cardname.CreateValidUpperCaseKeyForString());
+            TCard cardResult;
+            if (NameLookupDataSource.HashLookup.TryGetValue(cardNameHash, out cardResult))
+            {
+                return cardResult;
+            }
+            return default(TCard);
+        }
+
+        public TCard FindCardByFuzzyMatch(string cardname)
+        {
+            if (string.IsNullOrWhiteSpace(cardname))
+            {
+                return default(TCard);
+            }
+
+            var standardProbability = 0.75D;
+            var res = NameLookupDataSource.AllDistinctCards
+                .Select(
+                    card => new { score = card.Name.RemoveSpecialCharacters().FuzzyMatch(cardname.RemoveSpecialCharacters(), false), item = card })
+                .Where(arg => arg.score >= standardProbability)
+                .Take(10)
+                .OrderByDescending(arg => arg.score)
+                .FirstOrDefault();
+
+            if (res != null)
+            {
+                return res.item;
+            }
+            return default(TCard);
+        }
+    }
+
+    internal interface ICardNameLookupDataSource<TCard> where TCard : IHasName
+    {
+        IQueryable<TCard> AllDistinctCards { get; }
+        Dictionary<long, TCard> HashLookup { get; }
+    }
+
+    internal class CardNameLookupDataSource<TCard> : ICardNameLookupDataSource<TCard> where TCard : IHasName
+    {
+        private IQueryable<TCard> _allCards;
+        private Dictionary<long, TCard> _hashLookup;
+        private Task _initTask;
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly FNV1AHashAlgorithm64 FNV1AHashAlgorithm64 = new FNV1AHashAlgorithm64();
+
+        public CardNameLookupDataSource(IQueryable<TCard> allCards)
+        {
+            if (allCards == null)
+            {
+                throw new ArgumentNullException(nameof(allCards));
+            }
+
+            var allDistinctCardsByCardName = allCards.Distinct(new CardNameEqualityComparer<TCard>());
+
+#if HAVE_STRINGINTERN
+            var orderCardsTask = Task.Run(() => { _allCards = allDistinctCardsByCardName.OrderBy(card => string.Intern(card.Name)).AsQueryable(); });
+#else
+            var orderCardsTask = Task.Run(() => { _allCards = allDistinctCardsByCardName.OrderBy(card => card.Name).AsQueryable(); });
+#endif
+            var createHashTableTask =
+                Task.Run(
+                    () =>
+                    {
+                        _hashLookup =
+                            allDistinctCardsByCardName.ToDictionary(
+                                card =>
+                                {
+#if HAVE_STRINGINTERN
+                                    return
+                                        FNV1AHashAlgorithm64.HashStringCaseInsensitive(string.Intern(string.Intern(card.Name).CreateValidUpperCaseKeyForString()));
+#else
+                                    return FNV1AHashAlgorithm64.HashStringCaseInsensitive(card.Name.CreateValidUpperCaseKeyForString());
+#endif
+                                }, card => card);
+                    });
+
+            _initTask = Task.Run(() =>
+            {
+                Task.WhenAll(orderCardsTask, createHashTableTask).Wait();
+                _initTask = null;
+            });
+        }
+
+        public IQueryable<TCard> AllDistinctCards
+        {
+            get
+            {
+                _initTask?.Wait();
+                return _allCards;
+            }           
+        }
+
+        public Dictionary<long, TCard> HashLookup
+        {
+            get
+            {
+                _initTask?.Wait();
+                return _hashLookup;
+            }
+          
+        }
     }
 }
