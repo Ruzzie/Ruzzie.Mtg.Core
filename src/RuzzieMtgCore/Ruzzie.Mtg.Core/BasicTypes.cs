@@ -128,5 +128,18 @@ namespace Ruzzie.Mtg.Core
 
             return false;
         }
+
+        /// <summary>
+        /// Determines whether [is exactly land or basic land type].
+        /// </summary>
+        /// <param name="itemBasicType">Type of the item basic.</param>
+        /// <returns>
+        ///   <c>true</c> if [is exactlty a land or basic land type] [the specified item basic type]; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsOnlyLandOrBasicLandType(this BasicType itemBasicType)
+        {
+            return itemBasicType.ContainsBasicType(BasicType.BasicLand)
+                   || itemBasicType == BasicType.Land;
+        }
     }
 }

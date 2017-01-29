@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 namespace Ruzzie.Mtg.Core.UnitTests
 {
@@ -28,7 +29,7 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("Basic Snow Land — Plains", BasicType.BasicLand)]
         public void BasicTypesParsingTests(string types, BasicType expectedBasicType)
         {
-            Assert.That(BasicTypes.From(types), Is.EqualTo(expectedBasicType));
+            BasicTypes.From(types).Should().Be(expectedBasicType);
         }
 
         [TestCase(BasicType.Artifact | BasicType.Creature, BasicType.Artifact)]
@@ -36,7 +37,18 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase(BasicType.Creature, BasicType.Creature | BasicType.Artifact)]
         public void ContainsBasicType(BasicType input, BasicType shouldContain)
         {
-            Assert.That(input.ContainsBasicType(shouldContain), Is.True);
+            input.ContainsBasicType(shouldContain).Should().BeTrue();
+        }
+
+        [TestCase(BasicType.Artifact | BasicType.Creature, false)]
+        [TestCase(BasicType.Artifact | BasicType.Land, false)]
+        [TestCase(BasicType.Artifact | BasicType.BasicLand, true)]
+        [TestCase(BasicType.Land | BasicType.BasicLand, true)]
+        [TestCase(BasicType.Land, true)]
+        [TestCase(BasicType.None, false)]
+        public void IsOnlyLandOrBasicLandType(BasicType input, bool expected)
+        {
+            input.IsOnlyLandOrBasicLandType().Should().Be(expected);
         }
     }
 }
