@@ -673,8 +673,22 @@ namespace Ruzzie.Mtg.Core.Data
             {
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(cardname));
             }
+
             var result = new List<FuzzyMatch<TCard>>();
             cardname = cardname.Trim();
+
+            var containsMatch =
+                NameLookupDataSource.AllDistinctCards
+                    .Where(item => item.Name.ToUpperInvariant().Contains(cardname.ToUpperInvariant()))
+                    .Take(maxResults)
+                    .Select(item => new FuzzyMatch<TCard> {MatchProbability = (double) cardname.Length / item.Name.Length, Value = item});
+                           
+            result.AddRange(containsMatch);
+
+            if (result.Count >= maxResults)
+            {
+                return result;
+            }
 
             var itemQuery = NameLookupDataSource.AllDistinctCards
                 .Select(
@@ -689,21 +703,9 @@ namespace Ruzzie.Mtg.Core.Data
                 .OrderByDescending(arg => arg.MatchProbability);
             result.AddRange(itemQuery);
 
-            //then contains
-            var containsMatch =
-                NameLookupDataSource.AllDistinctCards.Where(item => item.Name.ToUpperInvariant().Contains(cardname.ToUpperInvariant()))
-                    .Select(item => new FuzzyMatch<TCard> {MatchProbability = (double) cardname.Length / item.Name.Length, Value = item})
-                    .Take(maxResults);
-
-            result.AddRange(containsMatch);
             return result.Distinct(new FuzzyMatchEqualityComparer<TCard>()).Take(maxResults);
-        }
-
-       
-    
+        }           
     }
-
-
 
     internal interface ICardNameLookupDataSource<TCard> where TCard : IHasName
     {
