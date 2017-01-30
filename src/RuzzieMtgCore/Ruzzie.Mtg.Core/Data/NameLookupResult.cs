@@ -21,5 +21,13 @@ namespace Ruzzie.Mtg.Core.Data
         /// The match result.
         /// </value>
         public LookupMatchResult MatchResult { get; set; }
+
+        /// <summary>
+        /// Gets or sets the match probability. This is a range between 0 and 1.
+        /// </summary>
+        /// <value>
+        /// The match probability.
+        /// </value>
+        public double MatchProbability { get; set; }
     }
 }

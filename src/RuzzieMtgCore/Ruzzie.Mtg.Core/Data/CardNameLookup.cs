@@ -8,7 +8,7 @@ using Ruzzie.FuzzyStrings;
 namespace Ruzzie.Mtg.Core.Data
 {
     /// <summary>
-    /// Can be used to lookup types by name. This is meant for mtg cards and has specific logic trying to match cardnames for that purpose.
+    /// Can be used to lookup types by partialName. This is meant for mtg cards and has specific logic trying to match cardnames for that purpose.
     /// </summary>
     /// <typeparam name="TCard">The type of the card.</typeparam>
     /// <seealso cref="ICardNameLookup{TCard}" />
@@ -66,9 +66,53 @@ namespace Ruzzie.Mtg.Core.Data
         }
 
         /// <summary>
-        /// Finds object matching the (casinsensitive) name. If an empty string is passed (also after a trim). The default(TCard) is returned.
+        /// Returns all probable matches for a partial name.
         /// </summary>
-        /// <param name="name">The name of the object to find.</param>
+        /// <param name="partialName">The partialName.</param>
+        /// <param name="minProbability"></param>
+        /// <param name="maxresults">The maxresults.</param>
+        /// <returns>
+        /// the lookupresults.
+        /// </returns>
+        /// <exception cref="ArgumentException">Value cannot be null or whitespace.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// minprobability must be > 0
+        /// maxresults must be > 0
+        /// </exception>
+        public IEnumerable<INameLookupResult<TCard>> LookupCardName(string partialName, double minProbability, int maxresults = 10)
+        {
+            if (string.IsNullOrWhiteSpace(partialName))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(partialName));
+            }
+            if (minProbability <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(minProbability));
+            }
+
+            if (maxresults <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(maxresults));
+            }
+
+            //get all fuzzy matches
+            var allFuzzyMatches = _lookupRepository.FindAllFuzzyMatchesAboveThreshold(partialName, minProbability, maxresults);
+
+            return
+                allFuzzyMatches.Select(
+                    match =>
+                        new NameLookupResult<TCard>
+                        {
+                            MatchResult = LookupMatchResult.FuzzyMatch,
+                            ResultObject = match.Value,
+                            MatchProbability = match.MatchProbability
+                        });
+        }
+
+        /// <summary>
+        /// Finds object matching the (casinsensitive) partialName. If an empty string is passed (also after a trim). The default(TCard) is returned.
+        /// </summary>
+        /// <param name="name">The name of the card to find.</param>
         /// <returns>The lookup result.</returns>
         public INameLookupResult<TCard> FindCardByName(string name)
         {
@@ -76,9 +120,9 @@ namespace Ruzzie.Mtg.Core.Data
         }
 
         /// <summary>
-        /// Finds object matching the (casinsensitive) name. If an empty string is passed (also after a trim). The default(TCard) is returned.
+        /// Finds object matching the (casinsensitive) partialName. If an empty string is passed (also after a trim). The default(TCard) is returned.
         /// </summary>
-        /// <param name="name">The name of the object to find.</param>
+        /// <param name="name">The name of the card to find.</param>
         /// <param name="minProbability">The minimum probability threshold for fuzzy matching. Should be between 0.75 and 0.99</param>
         /// <returns>The lookup result.</returns>
         public INameLookupResult<TCard> FindCardByName(string name, double minProbability)
@@ -95,10 +139,10 @@ namespace Ruzzie.Mtg.Core.Data
                 return new NameLookupResult<TCard> { MatchResult = LookupMatchResult.NoMatch };
             }
 
-            return LookupCardByName(name, minProbability);
+            return LookupSingleCardByName(name, minProbability);
         }
 
-        private INameLookupResult<TCard> LookupCardByName(string cardname, double minProbability)
+        private INameLookupResult<TCard> LookupSingleCardByName(string cardname, double minProbability)
         {          
             TCard listedCard = _lookupRepository.FindCardByExactName(cardname);
 
@@ -110,6 +154,7 @@ namespace Ruzzie.Mtg.Core.Data
             {
                 var lookupResult = new NameLookupResult<TCard>();
                 lookupResult.ResultObject = listedCard;
+                lookupResult.MatchProbability = 1.0;
                 return lookupResult;
             }
         }
@@ -237,16 +282,19 @@ namespace Ruzzie.Mtg.Core.Data
             //Lastly do a full fuzzy match if nothing is found so far
             if (_comparer.Equals(listedCard, Empty))
             {
-                listedCard = _lookupRepository.FindCardByFuzzyMatch(cardname, minProbability);
+                FuzzyMatch<TCard> fuzzyMatch = _lookupRepository.FindCardByFuzzyMatch(cardname, minProbability);
+                listedCard = fuzzyMatch.Value;
 
                 if (!_comparer.Equals(listedCard, Empty))
                 {
                     //now we have a fuzzymatch
                     lookupResult.MatchResult = LookupMatchResult.FuzzyMatch;
+                    lookupResult.MatchProbability = fuzzyMatch.MatchProbability;
                 }
             }
             else
             {
+                lookupResult.MatchProbability = 1.0;
                 lookupResult.MatchResult = LookupMatchResult.Match;
             }
 
@@ -492,6 +540,8 @@ namespace Ruzzie.Mtg.Core.Data
 
             return cardname;
         }
+
+      
     }
 
     internal class CardNameEqualityComparer<TCard> : IEqualityComparer<TCard> where TCard : IHasName
@@ -541,10 +591,33 @@ namespace Ruzzie.Mtg.Core.Data
         }
     }
 
-    internal interface ICardNameLookupRepository<out TCard> where TCard : IHasName
+
+    internal class FuzzyMatch<TCard>
+    {
+        public TCard Value { get; set; }
+        public double MatchProbability { get; set; }
+    }
+
+    internal class FuzzyMatchEqualityComparer<TCard> : IEqualityComparer<FuzzyMatch<TCard>> where TCard : IHasName
+    {
+        private readonly CardNameEqualityComparer<TCard> _equalityComparerImplementation = new CardNameEqualityComparer<TCard>(StringComparer.OrdinalIgnoreCase);
+
+        public bool Equals(FuzzyMatch<TCard> x, FuzzyMatch<TCard> y)
+        {
+            return _equalityComparerImplementation.Equals(x.Value, y.Value);
+        }
+
+        public int GetHashCode(FuzzyMatch<TCard> obj)
+        {
+            return _equalityComparerImplementation.GetHashCode(obj.Value);
+        }
+    }
+
+    internal interface ICardNameLookupRepository<TCard> where TCard : IHasName
     {
         TCard FindCardByExactName(string cardname);
-        TCard FindCardByFuzzyMatch(string cardname, double minProbability = 0.85D);
+        FuzzyMatch<TCard> FindCardByFuzzyMatch(string cardname, double minProbability = 0.85D);
+        IEnumerable<FuzzyMatch<TCard>> FindAllFuzzyMatchesAboveThreshold(string cardname, double minProbability = 0.85D, int maxResults = 10);
     }
 
     internal class CardNameLookupRepository<TCard> : ICardNameLookupRepository<TCard> where TCard : IHasName
@@ -575,29 +648,61 @@ namespace Ruzzie.Mtg.Core.Data
             return default(TCard);
         }
 
-        public TCard FindCardByFuzzyMatch(string cardname, double minProbability = 0.85D)
+        public FuzzyMatch<TCard> FindCardByFuzzyMatch(string cardname, double minProbability = 0.85D)
         {
             if (string.IsNullOrWhiteSpace(cardname))
             {
-                return default(TCard);
+                return new FuzzyMatch<TCard>();
             }
 
             cardname = cardname.Trim();
-            var res = NameLookupDataSource.AllDistinctCards
-                .Select(
-                    card => new { score = card.Name.RemoveSpecialCharacters().FuzzyMatch(cardname.RemoveSpecialCharacters(), false), item = card })
-                .Where(arg => arg.score >= minProbability)
-                .Take(10)
-                .OrderByDescending(arg => arg.score)
-                .FirstOrDefault();
+            var itemQuery = FindAllFuzzyMatchesAboveThreshold(cardname, minProbability);
+            var res = itemQuery.FirstOrDefault();
 
             if (res != null)
             {
-                return res.item;
+                return new FuzzyMatch<TCard> {Value = res.Value, MatchProbability = res.MatchProbability};
             }
-            return default(TCard);
+            return new FuzzyMatch<TCard>();
         }
+
+        public IEnumerable<FuzzyMatch<TCard>> FindAllFuzzyMatchesAboveThreshold(string cardname, double minProbability = 0.85D, int maxResults = 10)
+        {
+            if (string.IsNullOrWhiteSpace(cardname))
+            {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(cardname));
+            }
+            var result = new List<FuzzyMatch<TCard>>();
+            cardname = cardname.Trim();
+
+            var itemQuery = NameLookupDataSource.AllDistinctCards
+                .Select(
+                    card =>
+                        new FuzzyMatch<TCard>
+                        {
+                            MatchProbability = card.Name.RemoveSpecialCharacters().FuzzyMatch(cardname.RemoveSpecialCharacters(), false),
+                            Value = card
+                        })
+                .Where(arg => arg.MatchProbability >= minProbability)
+                .Take(maxResults)
+                .OrderByDescending(arg => arg.MatchProbability);
+            result.AddRange(itemQuery);
+
+            //then contains
+            var containsMatch =
+                NameLookupDataSource.AllDistinctCards.Where(item => item.Name.ToUpperInvariant().Contains(cardname.ToUpperInvariant()))
+                    .Select(item => new FuzzyMatch<TCard> {MatchProbability = (double) cardname.Length / item.Name.Length, Value = item})
+                    .Take(maxResults);
+
+            result.AddRange(containsMatch);
+            return result.Distinct(new FuzzyMatchEqualityComparer<TCard>()).Take(maxResults);
+        }
+
+       
+    
     }
+
+
 
     internal interface ICardNameLookupDataSource<TCard> where TCard : IHasName
     {

@@ -84,8 +84,11 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         public void FindCardTests(string searchCardName, string actualName)
         {
             //Arrange           
-            TestCard findCardByName = _cardNameLookup.FindCardByName(searchCardName).ResultObject;
+            var nameLookupResult = _cardNameLookup.FindCardByName(searchCardName);
+            TestCard findCardByName = nameLookupResult.ResultObject;
             Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
+
+            nameLookupResult.MatchProbability.Should().BeGreaterOrEqualTo(0.75);
         }
 
         [Test]
@@ -129,6 +132,21 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             dataSource.HashLookup.TryGetValue(hash, out foundCard).Should().BeTrue();
 
             hash.Should().Be(algo.HashStringCaseInsensitive(cardName.CreateValidUpperCaseKeyForString()));
+        }
+        
+        [TestCase("dack", 1)]
+        [TestCase("a", 10)]
+        [TestCase("ae", 4)]
+        [TestCase("Slogger", 1)]
+        [TestCase("seance", 1)]
+        [TestCase("Giant", 2)]
+        [TestCase("Giant  ", 2)]
+        [TestCase("asfasfjsdlkgjslkgjslkdgjdflkgjk", 0)]
+        public void MultipleProbableResultsWhenNoExactResultIsFound(string search, int expectedResults)
+        {
+            var results = _cardNameLookup.LookupCardName(search, 0.33, 10);
+
+            results.Count().Should().Be(expectedResults);
         }
 
         private static List<TestCard> CreateAllCardsTestList()
