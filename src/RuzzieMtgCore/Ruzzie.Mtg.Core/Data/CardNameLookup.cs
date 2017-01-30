@@ -153,6 +153,7 @@ namespace Ruzzie.Mtg.Core.Data
             else
             {
                 var lookupResult = new NameLookupResult<TCard>();
+                lookupResult.MatchResult = LookupMatchResult.Match;
                 lookupResult.ResultObject = listedCard;
                 lookupResult.MatchProbability = 1.0;
                 return lookupResult;

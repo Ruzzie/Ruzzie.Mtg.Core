@@ -77,18 +77,30 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         [TestCase("FAR __ AWAY", "Far // Away")]
         [TestCase("GIANT GROWTH", "Giant Growth")]
         //Some Fuzzy matching tests
-        [TestCase("Raakdoos Returns", "Rakdos's Return")]
-        [TestCase("Aethersprouts", "Aetherspouts")]
-        [TestCase("jotun grunt", "Jötun Grunt")]
-        [TestCase("men o war", "Man-o'-War")]        
-        public void FindCardTests(string searchCardName, string actualName)
+        [TestCase("Raakdoos Returns", "Rakdos's Return", LookupMatchResult.FuzzyMatch)]
+        [TestCase("Aethersprouts", "Aetherspouts", LookupMatchResult.FuzzyMatch)]
+        [TestCase("jotun grunt", "Jötun Grunt", LookupMatchResult.FuzzyMatch)]
+        [TestCase("men o war", "Man-o'-War", LookupMatchResult.FuzzyMatch)]        
+        public void FindCardTests(string searchCardName, string actualName, LookupMatchResult expecteMatchResult = LookupMatchResult.Match)
         {
             //Arrange           
             var nameLookupResult = _cardNameLookup.FindCardByName(searchCardName);
             TestCard findCardByName = nameLookupResult.ResultObject;
             Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
 
+            nameLookupResult.MatchResult.Should().Be(expecteMatchResult);
             nameLookupResult.MatchProbability.Should().BeGreaterOrEqualTo(0.75);
+        }
+
+        [TestCase("mental misstep", "Mental Misstep")]
+        public void FindExactMatchCardTests(string searchCardName, string actualName)
+        {
+            //Arrange           
+            var nameLookupResult = _cardNameLookup.FindCardByName(searchCardName);
+
+            nameLookupResult.MatchResult.Should().Be(LookupMatchResult.Match);
+            nameLookupResult.MatchProbability.Should().Be(1.0);
+            nameLookupResult.ResultObject.Should().NotBeNull();                       
         }
 
         [Test]
