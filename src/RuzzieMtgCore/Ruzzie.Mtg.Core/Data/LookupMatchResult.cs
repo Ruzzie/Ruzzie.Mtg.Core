@@ -12,6 +12,10 @@
         /// <summary>
         /// A match was found.
         /// </summary>
-        Match,            
+        Match,
+        /// <summary>
+        /// Indicates that a non exact match was found.
+        /// </summary>
+        FuzzyMatch
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
+using Ruzzie.Common.Hashing;
 using Ruzzie.FuzzyStrings;
 using Ruzzie.Mtg.Core.Data;
 
@@ -91,7 +93,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         [TestCase("Giant Ortoise", "Giant Tortoise")]
         public void FuzzyMatchTestAndOrdering(string searchCardName, string actualName)
         {
-            TestCard findCardByName = _cardNameLookup.FindCardByName(searchCardName).ResultObject;
+            TestCard findCardByName = _cardNameLookup.FindCardByName(searchCardName, 0.85D).ResultObject;
             Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
         }
 
@@ -110,6 +112,23 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         {
             var nameLookupResult = _cardNameLookup.FindCardByName(searchCardName);            
             Assert.That(nameLookupResult, Is.Not.Null.And.Property("MatchResult").EqualTo(LookupMatchResult.NoMatch).And.Property("ResultObject").EqualTo(null));
+        }
+
+        [Test]
+        public void HashTest()
+        {
+            var cardName = KnownSynonyms.GetSynonym("fa adiyah seer");
+            var dataSource = new CardNameLookupDataSource<TestCard>(CreateAllCardsTestList().AsQueryable());
+
+
+            var algo = new FNV1AHashAlgorithm64();
+            var hash = algo.HashStringCaseInsensitive(cardName.CreateValidUpperCaseKeyForString());
+
+            dataSource.HashLookup[hash].Should().NotBeNull();
+            TestCard foundCard;
+            dataSource.HashLookup.TryGetValue(hash, out foundCard).Should().BeTrue();
+
+            hash.Should().Be(algo.HashStringCaseInsensitive(cardName.CreateValidUpperCaseKeyForString()));
         }
 
         private static List<TestCard> CreateAllCardsTestList()

@@ -15,6 +15,7 @@ namespace Ruzzie.Mtg.Core.Data
     public class CardNameLookup<TCard> : ICardNameLookup<TCard> where TCard : IHasName
     {
         private readonly IEqualityComparer<TCard> _comparer;
+        private readonly double _minProbability;
         private static readonly TCard Empty = default(TCard);
 
         private readonly ICardNameLookupRepository<TCard> _lookupRepository;
@@ -49,8 +50,9 @@ namespace Ruzzie.Mtg.Core.Data
         /// </summary>
         /// <param name="allCards">All cards.</param>
         /// <param name="comparer">The comparer to use to compare whith default (notfound) value. This is not used for cardname comparisons.</param>
+        /// <param name="minProbability">The minimum probability threshold for fuzzy matching. Should be between 0.75 and 0.99</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public CardNameLookup(IQueryable<TCard> allCards, IEqualityComparer<TCard> comparer)
+        public CardNameLookup(IQueryable<TCard> allCards, IEqualityComparer<TCard> comparer, double minProbability = 0.7523D)
         {
             if (allCards == null)
             {
@@ -60,14 +62,26 @@ namespace Ruzzie.Mtg.Core.Data
             _lookupRepository = new CardNameLookupRepository<TCard>(allCards);
 
             _comparer = comparer;
+            _minProbability = minProbability;
         }
-    
+
         /// <summary>
         /// Finds object matching the (casinsensitive) name. If an empty string is passed (also after a trim). The default(TCard) is returned.
         /// </summary>
         /// <param name="name">The name of the object to find.</param>
         /// <returns>The lookup result.</returns>
         public INameLookupResult<TCard> FindCardByName(string name)
+        {
+           return FindCardByName(name, _minProbability);
+        }
+
+        /// <summary>
+        /// Finds object matching the (casinsensitive) name. If an empty string is passed (also after a trim). The default(TCard) is returned.
+        /// </summary>
+        /// <param name="name">The name of the object to find.</param>
+        /// <param name="minProbability">The minimum probability threshold for fuzzy matching. Should be between 0.75 and 0.99</param>
+        /// <returns>The lookup result.</returns>
+        public INameLookupResult<TCard> FindCardByName(string name, double minProbability)
         {
             if (string.IsNullOrWhiteSpace(name))
             {                
@@ -81,39 +95,34 @@ namespace Ruzzie.Mtg.Core.Data
                 return new NameLookupResult<TCard> { MatchResult = LookupMatchResult.NoMatch };
             }
 
-            return LookupCardByName(name);
+            return LookupCardByName(name, minProbability);
         }
 
-        private INameLookupResult<TCard> LookupCardByName(string cardname)
-        {
+        private INameLookupResult<TCard> LookupCardByName(string cardname, double minProbability)
+        {          
             TCard listedCard = _lookupRepository.FindCardByExactName(cardname);
 
             if (_comparer.Equals(listedCard, Empty))
             {
-                listedCard = Search(cardname);
-            }
-
-            var lookupResult = new NameLookupResult<TCard>();
-            lookupResult.ResultObject = listedCard;
-
-            if (_comparer.Equals(listedCard, Empty))
-            {
-                lookupResult.MatchResult = LookupMatchResult.NoMatch;
+                return Search(cardname, minProbability);
             }
             else
             {
-                lookupResult.MatchResult = LookupMatchResult.Match;
+                var lookupResult = new NameLookupResult<TCard>();
+                lookupResult.ResultObject = listedCard;
+                return lookupResult;
             }
-            return lookupResult;
         }
 
-        private TCard Search(string cardname)
+        private INameLookupResult<TCard> Search(string cardname, double minProbability)
         {
+            var lookupResult = new NameLookupResult<TCard>();
+
             TCard listedCard = _lookupRepository.FindCardByExactName(cardname.Replace(" s ", "\'s ").Replace(" / "," // "));
            
             if ( _comparer.Equals(listedCard,Empty))
             {
-                string synonym = GetSynonym(cardname);
+                string synonym = KnownSynonyms.GetSynonym(cardname);
                 if (synonym != null)
                 {
                     listedCard = _lookupRepository.FindCardByExactName(synonym);
@@ -224,13 +233,25 @@ namespace Ruzzie.Mtg.Core.Data
                 }
 
             }
-            //Lastly do a full fuzzy match
+
+            //Lastly do a full fuzzy match if nothing is found so far
             if (_comparer.Equals(listedCard, Empty))
             {
-                listedCard = _lookupRepository.FindCardByFuzzyMatch(cardname);
+                listedCard = _lookupRepository.FindCardByFuzzyMatch(cardname, minProbability);
+
+                if (!_comparer.Equals(listedCard, Empty))
+                {
+                    //now we have a fuzzymatch
+                    lookupResult.MatchResult = LookupMatchResult.FuzzyMatch;
+                }
+            }
+            else
+            {
+                lookupResult.MatchResult = LookupMatchResult.Match;
             }
 
-            return listedCard;
+            lookupResult.ResultObject = listedCard;
+            return lookupResult;
         }
 
         private TCard TryFindByVariatingCharacterOnEndOfWord(TCard listedCard, string[] words, int i, string wordEndsWith, string afterWordWithCharacherString)
@@ -471,78 +492,6 @@ namespace Ruzzie.Mtg.Core.Data
 
             return cardname;
         }
-
-        private static string GetSynonym(string cardname)
-        {
-            cardname = cardname.ToLowerInvariant();
-
-            if (cardname == "lim d l s vault")
-            {
-                return "Lim-Dûl's Vault";
-            }
-
-            if (cardname == "ther vial")
-            {
-                return "Æther Vial";
-            }
-
-            if (cardname == "man o war")
-            {
-                return "Man-o'-War";
-            }
-
-            if (cardname == "thersnipe")
-            {
-                return "Æthersnipe";
-            }
-
-            if (cardname == "gods eye gate to the reikai")
-            {
-                return "Gods' Eye, Gate to the Reikai";
-            }
-
-            if (cardname == "j tun grunt")
-            {
-                return "Jötun Grunt";
-            }
-
-            if (cardname == "silvergill adep")
-            {
-                return "Silvergill adept";
-            }         
-
-            if (cardname.Contains("rune of protection "))
-            {
-                return cardname.Replace("protection ", "protection: ");
-            }
-
-            if (cardname.Contains("circle of protection "))
-            {
-                return cardname.Replace("protection ", "protection: ");
-            }
-
-            if (cardname.Contains("s ance"))
-            {
-                return cardname.Replace("s ance", "Séance");
-            }
-
-            if (cardname.Contains("fa adiyah seer"))
-            {
-                return cardname.Replace("fa adiyah seer", "Fa'adiyah Seer");
-            }
-          
-            if (cardname.Contains("will o the wisp"))
-            {
-                return cardname.Replace("will o the wisp", "Will-o'-the-Wisp");
-            }
-
-            if (cardname == "snapc")
-            {
-                return "Snapcaster Mage";
-            }
-
-            return null;
-        }     
     }
 
     internal class CardNameEqualityComparer<TCard> : IEqualityComparer<TCard> where TCard : IHasName
@@ -595,7 +544,7 @@ namespace Ruzzie.Mtg.Core.Data
     internal interface ICardNameLookupRepository<out TCard> where TCard : IHasName
     {
         TCard FindCardByExactName(string cardname);
-        TCard FindCardByFuzzyMatch(string cardname);
+        TCard FindCardByFuzzyMatch(string cardname, double minProbability = 0.85D);
     }
 
     internal class CardNameLookupRepository<TCard> : ICardNameLookupRepository<TCard> where TCard : IHasName
@@ -615,8 +564,8 @@ namespace Ruzzie.Mtg.Core.Data
             if (string.IsNullOrWhiteSpace(cardname))
             {
                 return default(TCard);
-            }        
-
+            }
+            cardname = cardname.Trim();
             long cardNameHash = FNV1AHashAlgorithm64.HashStringCaseInsensitive(cardname.CreateValidUpperCaseKeyForString());
             TCard cardResult;
             if (NameLookupDataSource.HashLookup.TryGetValue(cardNameHash, out cardResult))
@@ -626,18 +575,18 @@ namespace Ruzzie.Mtg.Core.Data
             return default(TCard);
         }
 
-        public TCard FindCardByFuzzyMatch(string cardname)
+        public TCard FindCardByFuzzyMatch(string cardname, double minProbability = 0.85D)
         {
             if (string.IsNullOrWhiteSpace(cardname))
             {
                 return default(TCard);
             }
 
-            var standardProbability = 0.75D;
+            cardname = cardname.Trim();
             var res = NameLookupDataSource.AllDistinctCards
                 .Select(
                     card => new { score = card.Name.RemoveSpecialCharacters().FuzzyMatch(cardname.RemoveSpecialCharacters(), false), item = card })
-                .Where(arg => arg.score >= standardProbability)
+                .Where(arg => arg.score >= minProbability)
                 .Take(10)
                 .OrderByDescending(arg => arg.score)
                 .FirstOrDefault();
