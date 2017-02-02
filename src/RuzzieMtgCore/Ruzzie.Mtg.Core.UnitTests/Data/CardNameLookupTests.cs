@@ -161,6 +161,15 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             results.Count().Should().Be(expectedResults);
         }
 
+        [Test]
+        public void LookupGiveHigherProbabilityToItemWithMoreMatchingWords()
+        {
+            string query = "Kjeldoran elite";
+            var results = _cardNameLookup.LookupCardName(query, 0.94).ToList();
+            results[0].ResultObject.Name.Should().Be("Kjeldoran Elite Guard");
+            results[0].MatchProbability.Should().BeGreaterOrEqualTo(results[1].MatchProbability);
+        }
+
         private static List<TestCard> CreateAllCardsTestList()
         {
             return new List<TestCard>
@@ -206,7 +215,10 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
                 new TestCard {Name = "Rakdos's Return"},
                 new TestCard {Name = "Giant Tortoise"},
                 new TestCard {Name = "Giant Growth"},
-                new TestCard {Name = "Far // Away"}
+                new TestCard {Name = "Far // Away"},
+                new TestCard {Name = "Kjeldoran Elite Guard"},
+                new TestCard {Name = "Kjeldoran Gargoyle"}
+
             };
         }
 

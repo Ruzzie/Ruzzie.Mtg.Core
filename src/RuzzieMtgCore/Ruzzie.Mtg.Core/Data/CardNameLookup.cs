@@ -541,8 +541,6 @@ namespace Ruzzie.Mtg.Core.Data
 
             return cardname;
         }
-
-      
     }
 
     internal class CardNameEqualityComparer<TCard> : IEqualityComparer<TCard> where TCard : IHasName
@@ -675,18 +673,17 @@ namespace Ruzzie.Mtg.Core.Data
             }
 
             var result = new List<FuzzyMatch<TCard>>();
-            cardname = cardname.Trim();
+            cardname = cardname.Trim().RemoveSpecialCharacters();
 
             var containsMatch =
                 NameLookupDataSource.AllDistinctCards
-                    .Where(item => item.Name.ToUpperInvariant().Contains(cardname.ToUpperInvariant()))
+                    .Where(item => item.Name.RemoveSpecialCharacters().ToUpperInvariant().Contains(cardname.ToUpperInvariant()))
                     .Take(maxResults)
-                    .Select(item => new FuzzyMatch<TCard> {MatchProbability = (double) cardname.Length / item.Name.Length, Value = item});
+                    .Select(item => new FuzzyMatch<TCard> {MatchProbability = CalculateProbalityBasedOnContainsMatch(cardname, item), Value = item});
                            
-            result.AddRange(containsMatch);
-
             if (result.Count >= maxResults)
             {
+                result.AddRange(containsMatch);
                 return result;
             }
 
@@ -695,16 +692,23 @@ namespace Ruzzie.Mtg.Core.Data
                     card =>
                         new FuzzyMatch<TCard>
                         {
-                            MatchProbability = card.Name.RemoveSpecialCharacters().FuzzyMatch(cardname.RemoveSpecialCharacters(), false),
+                            MatchProbability = card.Name.RemoveSpecialCharacters().FuzzyMatch(cardname, false),
                             Value = card
                         })
                 .Where(arg => arg.MatchProbability >= minProbability)
                 .Take(maxResults)
                 .OrderByDescending(arg => arg.MatchProbability);
-            result.AddRange(itemQuery);
+
+            result.AddRange(itemQuery);//order of adding seems to matter
+            result.AddRange(containsMatch);
 
             return result.Distinct(new FuzzyMatchEqualityComparer<TCard>()).Take(maxResults);
-        }           
+        }
+
+        private static double CalculateProbalityBasedOnContainsMatch(string nameToFind, TCard cardThatContainsString)
+        {
+            return (double) nameToFind.Length / cardThatContainsString.Name.Length;
+        }
     }
 
     internal interface ICardNameLookupDataSource<TCard> where TCard : IHasName
@@ -727,7 +731,7 @@ namespace Ruzzie.Mtg.Core.Data
             {
                 throw new ArgumentNullException(nameof(allCards));
             }
-
+            
             var allDistinctCardsByCardName = allCards.Distinct(new CardNameEqualityComparer<TCard>());
 
 #if HAVE_STRINGINTERN
