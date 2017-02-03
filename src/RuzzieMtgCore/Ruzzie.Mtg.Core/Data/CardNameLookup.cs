@@ -686,6 +686,25 @@ namespace Ruzzie.Mtg.Core.Data
                 return containsMatch;
             }
 
+            var fuzzyMatchTokensResults = NameLookupDataSource.AllDistinctCards
+             .Select(
+                 card =>
+                     new FuzzyMatch<TCard>
+                     {
+                         MatchProbability = card.Name.RemoveSpecialCharacters().FuzzyMatchTokens(cardname, false),
+                         Value = card
+                     })
+             .Where(arg => arg.MatchProbability >= minProbability)
+             .Take(maxResults)
+             .OrderByDescending(arg => arg.MatchProbability).ToList();
+
+            if (fuzzyMatchTokensResults.Count + containsMatch.Count >= maxResults)
+            {
+                result.AddRange(fuzzyMatchTokensResults);//order of adding seems to matter
+                result.AddRange(containsMatch);
+                return result;
+            }
+
             var fuzzyMatchResults = NameLookupDataSource.AllDistinctCards
                 .Select(
                     card =>
@@ -696,27 +715,8 @@ namespace Ruzzie.Mtg.Core.Data
                         })
                 .Where(arg => arg.MatchProbability >= minProbability)
                 .Take(maxResults)
-                .OrderByDescending(arg => arg.MatchProbability).ToList();
-
-            if (fuzzyMatchResults.Count + containsMatch.Count >= maxResults)
-            {
-                result.AddRange(fuzzyMatchResults);//order of adding seems to matter
-                result.AddRange(containsMatch);
-                return result;
-            }
-
-            var fuzzyMatchTokensResults = NameLookupDataSource.AllDistinctCards
-              .Select(
-                  card =>
-                      new FuzzyMatch<TCard>
-                      {
-                          MatchProbability = card.Name.RemoveSpecialCharacters().FuzzyMatchTokens(cardname, false),
-                          Value = card
-                      })
-              .Where(arg => arg.MatchProbability >= minProbability)
-              .Take(maxResults)
-              .OrderByDescending(arg => arg.MatchProbability);
-
+                .OrderByDescending(arg => arg.MatchProbability);
+           
             result.AddRange(fuzzyMatchTokensResults);//order of adding seems to matter
             result.AddRange(fuzzyMatchResults);//order of adding seems to matter
             result.AddRange(containsMatch);

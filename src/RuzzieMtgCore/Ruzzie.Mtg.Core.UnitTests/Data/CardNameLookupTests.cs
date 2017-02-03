@@ -171,6 +171,17 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             results[0].MatchProbability.Should().BeGreaterOrEqualTo(results[1].MatchProbability);
         }
 
+        [Test]
+        public void LookupGiveHigherProbabilityToItemWithMoreMatchingWords_2()
+        {
+            string query = "Grizzled Angler";
+            var results = _cardNameLookup.LookupCardName(query, 0.5).ToList();
+            results[0].ResultObject.Name.Should().Be("Grizzled Angler");
+            results[0].MatchProbability.Should().BeGreaterThan(results[1].MatchProbability);
+            results[1].ResultObject.Name.Should().Be("Tangled Angler");
+            results[1].MatchProbability.Should().Be(0.74107471363930189);
+        }
+
         private static List<TestCard> CreateAllCardsTestList()
         {
             return new List<TestCard>
@@ -218,6 +229,8 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
                 new TestCard {Name = "Giant Growth"},
                 new TestCard {Name = "Far // Away"},
                 new TestCard {Name = "Kjeldoran Elite Guard"},
+                new TestCard {Name = "Grizzled Angler"},
+                new TestCard {Name = "Tangled Angler"},
                 new TestCard {Name = "Kjeldoran Gargoyle"}
 
             };
