@@ -89,7 +89,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
 
             nameLookupResult.MatchResult.Should().Be(expecteMatchResult);
-            nameLookupResult.MatchProbability.Should().BeGreaterOrEqualTo(0.75);
+            nameLookupResult.MatchProbability.Should().BeGreaterOrEqualTo(0.689);
         }
 
         [TestCase("mental misstep", "Mental Misstep")]
@@ -108,7 +108,8 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         [TestCase("Giant Ortoise", "Giant Tortoise")]
         public void FuzzyMatchTestAndOrdering(string searchCardName, string actualName)
         {
-            TestCard findCardByName = _cardNameLookup.FindCardByName(searchCardName, 0.85D).ResultObject;
+            var nameLookupResult = _cardNameLookup.FindCardByName(searchCardName, 0.68D);
+            TestCard findCardByName = nameLookupResult.ResultObject;
             Assert.That(findCardByName, Is.Not.Null.And.Property("Name").EqualTo(actualName));
         }
 
@@ -165,7 +166,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         public void LookupGiveHigherProbabilityToItemWithMoreMatchingWords()
         {
             string query = "Kjeldoran elite";
-            var results = _cardNameLookup.LookupCardName(query, 0.94).ToList();
+            var results = _cardNameLookup.LookupCardName(query, 0.5).ToList();
             results[0].ResultObject.Name.Should().Be("Kjeldoran Elite Guard");
             results[0].MatchProbability.Should().BeGreaterOrEqualTo(results[1].MatchProbability);
         }

@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "title": "Ruzzie.Mtg.Core",
   "description": "Some shared types for my Mtg project",
@@ -16,8 +16,7 @@
   "dependencies": {
     "Ruzzie.Cache.FlashCache": "2.0.101",
     "Ruzzie.Common": "1.0.49",
-    "Ruzzie.FuzzyStrings": "2.0.12"
-    
+    "Ruzzie.FuzzyStrings": "2.1.14"
   },
   "frameworks": {
     "netcoreapp1.0": {
