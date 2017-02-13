@@ -15,14 +15,28 @@ namespace Ruzzie.Mtg.Core
         private static readonly ConcurrentDictionary<string,Color> EnumNameCache = new ConcurrentDictionary<string, Color>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Determines whether the specified colors to check contains color.
+        /// Determines whether the specified colors to check contains <b>any</b> flags of the colorsToCheck color.
         /// </summary>
         /// <param name="colors">The colors.</param>
         /// <param name="colorsToCheck">The colors to check.</param>
         /// <returns>
         ///   <c>true</c> if the specified colors to check contains color; otherwise, <c>false</c>.
         /// </returns>
+        [Obsolete("This is replaced by the ContainsAnyColor function.")]
         public static bool ContainsColor(this Color colors,Color colorsToCheck)
+        {
+            return ContainsAnyColor(colors, colorsToCheck);
+        }
+
+        /// <summary>
+        /// Determines whether the specified colors to check contains <b>any</b> flags of the colorsToCheck color.
+        /// </summary>
+        /// <param name="colors">The colors.</param>
+        /// <param name="colorsToCheck">The colors to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified colors to check contains color; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool ContainsAnyColor(this Color colors, Color colorsToCheck)
         {
             if ((colors & colorsToCheck) != 0)
             {
@@ -30,6 +44,19 @@ namespace Ruzzie.Mtg.Core
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Determines whether the specified colors to check contains <b>all</b> flags of the colorsToCheck color.
+        /// </summary>
+        /// <param name="colors">The colors.</param>
+        /// <param name="colorsToCheck">The colors to check.</param>
+        /// <returns>
+        ///   <c>true</c> if [contains color all] [the specified colors to check]; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool ContainsAllColor(this Color colors, Color colorsToCheck)
+        {
+            return ((colors & colorsToCheck) == colorsToCheck);
         }
 
         /// <summary>

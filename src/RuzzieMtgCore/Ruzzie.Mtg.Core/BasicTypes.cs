@@ -112,14 +112,28 @@ namespace Ruzzie.Mtg.Core
         }
 
         /// <summary>
-        /// Determines whether [contains basic type] [the specified basic type to check].
+        /// Determines whether a basicType contains <b>any</b> of of the basicTypeToCheck types.
         /// </summary>
         /// <param name="basicType">Type of the basic.</param>
         /// <param name="basicTypeToCheck">The basic type to check.</param>
         /// <returns>
         ///   <c>true</c> if [contains basic type] [the specified basic type to check]; otherwise, <c>false</c>.
         /// </returns>
+        [Obsolete("This is replaced by the ContainsAnyBasicType function.")]
         public static bool ContainsBasicType(this BasicType basicType, BasicType basicTypeToCheck)
+        {
+            return ContainsAnyBasicType(basicType, basicTypeToCheck);
+        }
+
+        /// <summary>
+        /// Determines whether a basicType contains <b>any</b> of of the basicTypeToCheck types.
+        /// </summary>
+        /// <param name="basicType">Type of the basic.</param>
+        /// <param name="basicTypeToCheck">The basic type to check.</param>
+        /// <returns>
+        ///   <c>true</c> if [contains basic type] [the specified basic type to check]; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool ContainsAnyBasicType(this BasicType basicType, BasicType basicTypeToCheck)
         {
             if ((basicType & basicTypeToCheck) != 0)
             {
@@ -127,6 +141,19 @@ namespace Ruzzie.Mtg.Core
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Determines whether a basicType contains <b>all</b> of of the basicTypeToCheck types.
+        /// </summary>
+        /// <param name="basicType">Type of the basic.</param>
+        /// <param name="basicTypeToCheck">The basic type to check.</param>
+        /// <returns>
+        ///   <c>true</c> if [contains basic type] [the specified basic type to check]; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool ContainsAllBasicType(this BasicType basicType, BasicType basicTypeToCheck)
+        {
+            return ((basicType & basicTypeToCheck) == basicTypeToCheck);
         }
 
         /// <summary>
@@ -138,7 +165,7 @@ namespace Ruzzie.Mtg.Core
         /// </returns>
         public static bool IsOnlyLandOrBasicLandType(this BasicType itemBasicType)
         {
-            return itemBasicType.ContainsBasicType(BasicType.BasicLand)
+            return itemBasicType.ContainsAnyBasicType(BasicType.BasicLand)
                    || itemBasicType == BasicType.Land;
         }
     }

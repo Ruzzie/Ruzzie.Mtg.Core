@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 namespace Ruzzie.Mtg.Core.UnitTests
 {
@@ -83,9 +84,23 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase(Color.W | Color.B, Color.W, true)]
         [TestCase(Color.W, Color.G, false)]
         [TestCase(Color.W | Color.B, Color.G, false)]
-        public void ContainsColorTest(Color source, Color target, bool expected)
+        [TestCase(Color.G | Color.B, Color.G | Color.U, true)]
+        public void ContainsAnyColorTest(Color source, Color target, bool expected)
         {
-            Assert.That(source.ContainsColor(target), Is.EqualTo(expected));
+            source.ContainsAnyColor(target).Should().Be(expected);
+        }
+
+        [TestCase(Color.Colorless, Color.Colorless, true)]
+        [TestCase(Color.Colorless, Color.W, false)]
+        [TestCase(Color.W, Color.Colorless, true)]
+        [TestCase(Color.W, Color.W, true)]
+        [TestCase(Color.W | Color.B, Color.W, true)]
+        [TestCase(Color.W, Color.G, false)]
+        [TestCase(Color.W | Color.B, Color.G, false)]
+        [TestCase(Color.G | Color.B, Color.G | Color.U, false)]
+        public void ContainsAllColorTest(Color source, Color target, bool expected)
+        {
+            source.ContainsAllColor(target).Should().Be(expected);
         }
 
         [TestCase(Color.Colorless, 0, false)]

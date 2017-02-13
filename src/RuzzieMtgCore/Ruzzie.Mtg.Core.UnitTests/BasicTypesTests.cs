@@ -35,9 +35,17 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase(BasicType.Artifact | BasicType.Creature, BasicType.Artifact)]
         [TestCase(BasicType.Artifact | BasicType.Creature, BasicType.Creature)]
         [TestCase(BasicType.Creature, BasicType.Creature | BasicType.Artifact)]
-        public void ContainsBasicType(BasicType input, BasicType shouldContain)
+        public void ContainsAnyBasicType(BasicType input, BasicType shouldContain)
         {
-            input.ContainsBasicType(shouldContain).Should().BeTrue();
+            input.ContainsAnyBasicType(shouldContain).Should().BeTrue();
+        }
+
+        [TestCase(BasicType.Artifact | BasicType.Creature, BasicType.Artifact, true)]
+        [TestCase(BasicType.Artifact | BasicType.Creature, BasicType.Creature, true)]
+        [TestCase(BasicType.Creature, BasicType.Creature | BasicType.Artifact,false)]
+        public void ContainsAllBasicType(BasicType input, BasicType typeToCheck, bool expected)
+        {
+            input.ContainsAllBasicType(typeToCheck).Should().Be(expected);
         }
 
         [TestCase(BasicType.Artifact | BasicType.Creature, false)]
