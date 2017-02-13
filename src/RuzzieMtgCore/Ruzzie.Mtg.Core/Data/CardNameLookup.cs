@@ -543,15 +543,28 @@ namespace Ruzzie.Mtg.Core.Data
         }
     }
 
-    internal class CardNameEqualityComparer<TCard> : IEqualityComparer<TCard> where TCard : IHasName
+    /// <summary>
+    /// Compares Cards only on name
+    /// </summary>
+    /// <typeparam name="TCard">The type of the card.</typeparam>
+    /// <seealso cref="System.Collections.Generic.IEqualityComparer{TCard}" />
+    public class CardNameEqualityComparer<TCard> : IEqualityComparer<TCard> where TCard : IHasName
     {
         private readonly StringComparer _nameComparerToUse;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CardNameEqualityComparer{TCard}"/> class. Uses OrdinalIgnoreCase by default.
+        /// </summary>
         public CardNameEqualityComparer()
         {
             _nameComparerToUse = StringComparer.OrdinalIgnoreCase;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CardNameEqualityComparer{TCard}"/> class.
+        /// </summary>
+        /// <param name="nameComparerToUse">The name comparer to use.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public CardNameEqualityComparer(StringComparer nameComparerToUse)
         {
             if (nameComparerToUse == null)
@@ -560,7 +573,15 @@ namespace Ruzzie.Mtg.Core.Data
             }
             _nameComparerToUse = nameComparerToUse;
         }
-                        
+
+        /// <summary>
+        /// Determines whether the specified objects are equal.
+        /// </summary>
+        /// <param name="x">The first object of type <typeparamref name="TCard" /> to compare.</param>
+        /// <param name="y">The second object of type <typeparamref name="TCard" /> to compare.</param>
+        /// <returns>
+        /// true if the specified objects are equal; otherwise, false.
+        /// </returns>
         public bool Equals(TCard x, TCard y)
         {
             if (ReferenceEquals(x, y))
@@ -584,12 +605,18 @@ namespace Ruzzie.Mtg.Core.Data
                    _nameComparerToUse.Equals(x.Name.CreateValidUpperCaseKeyForString(), y.Name.CreateValidUpperCaseKeyForString());
         }
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// </returns>
         public int GetHashCode(TCard obj)
         {
             return _nameComparerToUse.GetHashCode(obj.Name.CreateValidUpperCaseKeyForString());
         }
     }
-
 
     internal class FuzzyMatch<TCard>
     {
