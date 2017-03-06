@@ -105,8 +105,6 @@ namespace Ruzzie.Mtg.Core.UnitTests
 
         [TestCase(Color.Colorless, 0, false)]
         [TestCase(Color.Colorless, 1, false)]
-        [TestCase(Color.Colorless, 0, false)]
-        [TestCase(Color.Colorless, 0, false)]
         [TestCase(Color.W | Color.G, 1, true)]
         [TestCase(Color.W | Color.G, 2, false)]
         [TestCase(Color.W | Color.G | Color.R, 2, true)]
@@ -122,6 +120,15 @@ namespace Ruzzie.Mtg.Core.UnitTests
         public void CardColorsToStringTest(Color input, string expectedValue)
         {
             Assert.That("" + input, Is.EqualTo(expectedValue));
+        }
+
+        [TestCase(Color.Colorless, 0)]
+        [TestCase(Color.R, 1)]
+        [TestCase(Color.R | Color.B, 2)]
+        [TestCase(Color.Colorless | Color.R | Color.B | Color.G | Color.U | Color.W, 5)]
+        public void GetNumberOfColorsTest(Color input, int expectedCount)
+        {
+            input.GetNumberOfColors().Should().Be(expectedCount);
         }
     }
 }
