@@ -54,5 +54,12 @@ namespace Ruzzie.Mtg.Core.Data
         /// The legality.
         /// </value>
         int Legality { get; set; }
+        /// <summary>
+        /// Gets or sets the mana cost string (ex. {1}{W}{U}) or {W/U} or {2/B} or {U/P}.
+        /// </summary>
+        /// <value>
+        /// The mana cost.
+        /// </value>
+        string ManaCost { get; set; }
     }
 }
