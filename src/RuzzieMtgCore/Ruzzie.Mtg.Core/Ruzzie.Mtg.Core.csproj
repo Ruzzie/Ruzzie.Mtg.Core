@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Some shared types for my Mtg project</Description>
+    <Copyright>Copyright © Dorus Verhoeckx 2017</Copyright>
+    <AssemblyTitle>Ruzzie.Mtg.Core</AssemblyTitle>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Authors>Dorus Verhoeckx</Authors>
+    <TargetFrameworks>netcoreapp1.0;netstandard1.6;net46;net461</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Ruzzie.Mtg.Core</AssemblyName>
+    <PackageId>Ruzzie.Mtg.Core</PackageId>
+    <PackageProjectUrl>https://github.com/Ruzzie/Ruzzie.Mtg.Core</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Ruzzie/Ruzzie.Mtg.Core/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>git://github.com/Ruzzie/Ruzzie.Mtg.Core</RepositoryUrl>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ruzzie.Cache.FlashCache" Version="2.0.101" />
+    <PackageReference Include="Ruzzie.Common" Version="1.0.49" />
+    <PackageReference Include="Ruzzie.FuzzyStrings" Version="2.1.14" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
+    <DefineConstants>$(DefineConstants);HAVE_SERIALIZABLE;HAVE_STRINGINTERN;HAVE_FULL_REFLECTION</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>
