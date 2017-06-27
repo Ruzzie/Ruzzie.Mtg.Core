@@ -1,0 +1,31 @@
+5 Island
+5 Plains
+4 Temple of Enlightenment
+4 Azorius Guildgate
+4 Mutavault
+4 Hallowed Fountain
+1 Ætherling
+4 Dissolve
+4 Divination
+4 Sphinx's Revelation
+4 Supreme Verdict
+3 Azorius Charm
+2 Celestial Flare
+2 Last Breath
+2 Planar Cleansing
+2 Syncopate
+1 Deicide
+3 Jace, Architect of Thought
+1 Elixir of Immortality
+1 Elspeth, Sun's Champion
+Sideboard
+1 Deicide
+2 Elspeth, Sun's Champion
+3 Nyx-Fleece Ram
+1 Negate
+1 Jace, Memory Adept
+3 Gainsay
+1 Dispel
+1 Detention Sphere
+1 Banishing Light
+1 Pithing Needle

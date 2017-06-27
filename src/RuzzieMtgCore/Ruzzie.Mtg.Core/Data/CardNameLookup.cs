@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +17,9 @@ namespace Ruzzie.Mtg.Core.Data
         private readonly IEqualityComparer<TCard> _comparer;
         private readonly double _minProbability;
         private static readonly TCard Empty = default(TCard);
+        private static readonly char InvalidUnicodeCharValue = (char)65533;
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly string AeSingleCharWrongValue = new string(new[] { InvalidUnicodeCharValue });
 
         private readonly ICardNameLookupRepository<TCard> _lookupRepository;
 
@@ -163,7 +166,8 @@ namespace Ruzzie.Mtg.Core.Data
         private INameLookupResult<TCard> Search(string cardname, double minProbability)
         {
             var lookupResult = new NameLookupResult<TCard>();
-
+            cardname = cardname.Replace("�a", "éa");
+            cardname = cardname.Replace(AeSingleCharWrongValue, "Ae").Replace("Æ", "Ae");
             TCard listedCard = _lookupRepository.FindCardByExactName(cardname.Replace(" s ", "\'s ").Replace(" / "," // "));
            
             if ( _comparer.Equals(listedCard,Empty))
@@ -209,7 +213,7 @@ namespace Ruzzie.Mtg.Core.Data
                 listedCard = _lookupRepository.FindCardByExactName(cardname.Replace("ther", "Aether"));
                 if ( _comparer.Equals(listedCard,Empty))
                 {
-                    listedCard = _lookupRepository.FindCardByExactName(cardname.Replace("ther", "�ther"));
+                    listedCard = _lookupRepository.FindCardByExactName(cardname.Replace("ther", "Æther"));
                 }
             }
 

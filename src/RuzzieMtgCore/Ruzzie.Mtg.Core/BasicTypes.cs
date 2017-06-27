@@ -119,20 +119,6 @@ namespace Ruzzie.Mtg.Core
         /// <returns>
         ///   <c>true</c> if [contains basic type] [the specified basic type to check]; otherwise, <c>false</c>.
         /// </returns>
-        [Obsolete("This is replaced by the ContainsAnyBasicType function.")]
-        public static bool ContainsBasicType(this BasicType basicType, BasicType basicTypeToCheck)
-        {
-            return ContainsAnyBasicType(basicType, basicTypeToCheck);
-        }
-
-        /// <summary>
-        /// Determines whether a basicType contains <b>any</b> of of the basicTypeToCheck types.
-        /// </summary>
-        /// <param name="basicType">Type of the basic.</param>
-        /// <param name="basicTypeToCheck">The basic type to check.</param>
-        /// <returns>
-        ///   <c>true</c> if [contains basic type] [the specified basic type to check]; otherwise, <c>false</c>.
-        /// </returns>
         public static bool ContainsAnyBasicType(this BasicType basicType, BasicType basicTypeToCheck)
         {
             if ((basicType & basicTypeToCheck) != 0)
