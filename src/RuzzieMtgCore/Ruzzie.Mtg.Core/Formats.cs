@@ -6,21 +6,7 @@ namespace Ruzzie.Mtg.Core
     /// Helper for the <see cref="Format"/> enum.
     /// </summary>
     public static class Formats
-    {
-        /// <summary>
-        /// Determines whether the specified contains <b>any</b> of the formatToCheck flags.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="formatToCheck">The format to check.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified format to check contains format; otherwise, <c>false</c>.
-        /// </returns>
-        [Obsolete("This is replaced by the ContainsAnyFormat function.")]
-        public static bool ContainsFormat(this Format format, Format formatToCheck)
-        {
-            return ContainsAnyFormat(format, formatToCheck);
-        }
-
+    {      
         /// <summary>
         /// Determines whether the specified contains <b>any</b> of the formatToCheck flags.
         /// </summary>

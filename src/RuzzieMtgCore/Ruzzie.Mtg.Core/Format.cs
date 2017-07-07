@@ -38,7 +38,7 @@ namespace Ruzzie.Mtg.Core
         /// </summary>
         Penny = 64,
         /// <summary>
-        /// The duel format (128)
+        /// The duel commander format format (128)
         /// </summary>
         Duel = 128,
         /// <summary>
@@ -48,6 +48,10 @@ namespace Ruzzie.Mtg.Core
         /// <summary>
         /// The frontier format (512)
         /// </summary>
-        Frontier = 512
+        Frontier = 512,
+        /// <summary>
+        /// The 1v1 Commander format (1024)
+        /// </summary>
+        OneVsOneCommander = 1024,
     }
 }

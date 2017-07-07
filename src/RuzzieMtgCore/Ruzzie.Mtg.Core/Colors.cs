@@ -22,20 +22,6 @@ namespace Ruzzie.Mtg.Core
         /// <returns>
         ///   <c>true</c> if the specified colors to check contains color; otherwise, <c>false</c>.
         /// </returns>
-        [Obsolete("This is replaced by the ContainsAnyColor function.")]
-        public static bool ContainsColor(this Color colors,Color colorsToCheck)
-        {
-            return ContainsAnyColor(colors, colorsToCheck);
-        }
-
-        /// <summary>
-        /// Determines whether the specified colors to check contains <b>any</b> flags of the colorsToCheck color.
-        /// </summary>
-        /// <param name="colors">The colors.</param>
-        /// <param name="colorsToCheck">The colors to check.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified colors to check contains color; otherwise, <c>false</c>.
-        /// </returns>
         public static bool ContainsAnyColor(this Color colors, Color colorsToCheck)
         {
             if ((colors & colorsToCheck) != 0)

@@ -2,9 +2,12 @@
 
 namespace Ruzzie.Mtg.Core.Data
 {
-    //TODO: move to core library and implement caseinsensitive equality operators
+    /// <summary>
+    /// Structure for capturing card name and the count of the card.
+    /// </summary>
     public struct CardNameAndCount : IEquatable<CardNameAndCount>
     {
+
         public CardNameAndCount(string name, int count)
         {
             Name = name;
@@ -13,6 +16,7 @@ namespace Ruzzie.Mtg.Core.Data
         public string Name { get; }
         public int Count { get; set; }
 
+        /// <inheritdoc />
         public bool Equals(CardNameAndCount other)
         {
 #if HAVE_STRINGCOMPARISONINVARIANTCULTURE
@@ -22,12 +26,16 @@ namespace Ruzzie.Mtg.Core.Data
 #endif
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is CardNameAndCount && Equals((CardNameAndCount) obj);
         }
 
+        /// <summary>Returns the hash code for this instance. This is soley based on the card name</summary>
+        /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+        /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
 #if HAVE_STRINGCOMPARISONINVARIANTCULTURE
@@ -36,12 +44,12 @@ namespace Ruzzie.Mtg.Core.Data
             return (Name != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(Name) : 0);
 #endif
         }
-
+        /// <inheritdoc />
         public static bool operator ==(CardNameAndCount left, CardNameAndCount right)
         {
             return left.Equals(right);
         }
-
+        /// <inheritdoc />
         public static bool operator !=(CardNameAndCount left, CardNameAndCount right)
         {
             return !left.Equals(right);

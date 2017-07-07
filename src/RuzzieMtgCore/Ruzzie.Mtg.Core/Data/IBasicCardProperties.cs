@@ -11,7 +11,7 @@ namespace Ruzzie.Mtg.Core.Data
         /// <value>
         /// The price.
         /// </value>
-        double Price { get; set; }
+        double? Price { get; set; }
         /// <summary>
         /// Gets or sets the CMC. (converted mana costs)
         /// </summary>

@@ -189,7 +189,7 @@ Sideboard
     public class BasicCardPoco : IBasicCardProperties
     {
         public string Name { get; set; }
-        public double Price { get; set; }
+        public double? Price { get; set; }
         public int Cmc { get; set; }
         public int ColorIdentity { get; set; }
         public int BasicType { get; set; }
