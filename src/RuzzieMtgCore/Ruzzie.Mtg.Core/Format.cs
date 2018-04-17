@@ -53,5 +53,9 @@ namespace Ruzzie.Mtg.Core
         /// The 1v1 Commander format (1024)
         /// </summary>
         OneVsOneCommander = 1024,
+        /// <summary>
+        /// The Brawl Commander format (2048)
+        /// </summary>
+        Brawl = 2048,
     }
 }
