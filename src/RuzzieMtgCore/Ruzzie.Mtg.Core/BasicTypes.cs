@@ -15,7 +15,7 @@ namespace Ruzzie.Mtg.Core
         private static readonly ConcurrentDictionary<string,BasicType> EnumNameCache = new ConcurrentDictionary<string, BasicType>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// All Basic land card names uppercased.
+        /// All Basic land card names upper cased.
         /// A readonly <see cref="ReadOnlySet{String}"/> wrapped around a <see cref="HashSet{String}"/> for fast lookup.
         /// "ISLAND", "PLAINS", "SWAMP", "FOREST", "MOUNTAIN", "SNOW-COVERED ISLAND", "SNOW-COVERED PLAINS", "SNOW-COVERED SWAMP", "SNOW-COVERED FOREST", "SNOW-COVERED MOUNTAIN", "WASTES"
         /// </summary>
@@ -46,7 +46,7 @@ namespace Ruzzie.Mtg.Core
         /// <summary>
         /// Parses a string with al the types and returns a <see cref="BasicType"/> enum for all matching basic types.
         /// </summary>
-        /// <param name="typesString">The types string delimeted by space dash space.</param>
+        /// <param name="typesString">The types string delimited by space dash space.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Value cannot be null or whitespace.</exception>
         public static BasicType From(string typesString)
@@ -67,7 +67,7 @@ namespace Ruzzie.Mtg.Core
         }
 
         /// <summary>
-        /// Parses a string  arraywith al the types and returns a <see cref="BasicType"/> enum for all matching basic types.
+        /// Parses a string array with al the types and returns a <see cref="BasicType"/> enum for all matching basic types.
         /// </summary>
         /// <param name="types">All types as a string array with not delimited by space dash space.</param>
         /// <returns></returns>
@@ -81,7 +81,8 @@ namespace Ruzzie.Mtg.Core
 
             BasicType currentBasicTypes = BasicType.None;
 
-            for (int i = 0; i < types.Length; i++)
+            var typesLength = types.Length;
+            for (int i = 0; i < typesLength; i++)
             {
                 string currentTypeString = types[i];
                 currentBasicTypes |= EnumNameCache.GetOrAdd(currentTypeString,FromSingleTypeStringLine);
@@ -92,15 +93,17 @@ namespace Ruzzie.Mtg.Core
 
         private static BasicType FromSingleTypeStringLine(string currentTypeString)
         {
-            if (StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Land") || StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Snow Land"))
+            if (StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Land") ||
+                StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Snow Land"))
             {
-                return BasicType.BasicLand;               
+                return BasicType.BasicLand;
             }
 
             var typeWords = currentTypeString.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
 
             BasicType currentBasicType = BasicType.None;
-            for (int j = 0; j < typeWords.Length; j++)
+            var typeWordsLength = typeWords.Length;
+            for (int j = 0; j < typeWordsLength; j++)
             {
                 BasicType enumResult;
                 if (Enum.TryParse(typeWords[j], true, out enumResult))
@@ -108,6 +111,7 @@ namespace Ruzzie.Mtg.Core
                     currentBasicType |= enumResult;
                 }
             }
+
             return currentBasicType;
         }
 
@@ -147,7 +151,7 @@ namespace Ruzzie.Mtg.Core
         /// </summary>
         /// <param name="itemBasicType">Type of the item basic.</param>
         /// <returns>
-        ///   <c>true</c> if [is exactlty a land or basic land type] [the specified item basic type]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is exactly a land or basic land type] [the specified item basic type]; otherwise, <c>false</c>.
         /// </returns>
         public static bool IsOnlyLandOrBasicLandType(this BasicType itemBasicType)
         {

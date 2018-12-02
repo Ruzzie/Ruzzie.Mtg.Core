@@ -12,7 +12,7 @@ namespace Ruzzie.Mtg.Core
         private static readonly FNV1AHashAlgorithm64 HashAlgo64 = new FNV1AHashAlgorithm64();
 
         /// <summary>
-        /// Creates a valid rowkey. The input value will be uppercased and // will be replaced by underscores
+        /// Creates a valid string based row key. The input value will be upper cased and // will be replaced by underscores
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="forwardSlashesReplaceValue"></param>
@@ -32,7 +32,7 @@ namespace Ruzzie.Mtg.Core
         }
 
         /// <summary>
-        /// Generates the bidirectonal key for two card name comparisons. the strings are first put through the <see cref="CreateValidUpperCaseKeyForString"/> function.
+        /// Generates the bidirectional key for two card name comparisons. the strings are first put through the <see cref="CreateValidUpperCaseKeyForString"/> function.
         /// </summary>
         /// <param name="firstString">The first string.</param>
         /// <param name="secondString">The second string.</param>
@@ -44,7 +44,7 @@ namespace Ruzzie.Mtg.Core
         }
 
         /// <summary>
-        /// Generates the bidirectonal key for two string comparisons.
+        /// Generates the bidirectional key for two string comparisons.
         /// </summary>
         /// <param name="firstString">The first string.</param>
         /// <param name="secondString">The second string.</param>
@@ -57,7 +57,7 @@ namespace Ruzzie.Mtg.Core
         }
 
         /// <summary>
-        /// Generates the bidirectonal key for two u longs.
+        /// Generates the bidirectional key for two u longs.
         /// </summary>
         /// <param name="firstUlong">The first ulong.</param>
         /// <param name="secondUlong">The second ulong.</param>

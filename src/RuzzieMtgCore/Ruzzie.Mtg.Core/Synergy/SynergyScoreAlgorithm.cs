@@ -15,7 +15,7 @@ namespace Ruzzie.Mtg.Core.Synergy
         private const int MaxScore = 10;
 
         /// <summary>
-        /// Determines whether this instance is zero whitin the tolerance of <see cref="Epsilon"/>
+        /// Determines whether this instance is zero within the tolerance of <see cref="Epsilon"/>
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>

@@ -78,7 +78,6 @@ namespace Ruzzie.Mtg.Core.Parsing
                         if (currentCardCount > 4 && currentCardCount % 4 == 0)
                         {
                             newCount = 4;
-                            //input.Count = 4;
                         }
                         else
                         {

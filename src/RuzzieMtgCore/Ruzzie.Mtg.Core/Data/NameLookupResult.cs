@@ -14,6 +14,7 @@ namespace Ruzzie.Mtg.Core.Data
         /// The result object.
         /// </value>
         public T ResultObject { get; set; }
+       
         /// <summary>
         /// Gets or sets the match result.
         /// </summary>

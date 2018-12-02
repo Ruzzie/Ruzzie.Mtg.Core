@@ -43,7 +43,7 @@ namespace Ruzzie.Mtg.Core.Data
         /// Initializes a new instance of the <see cref="CardNameLookup{TCard}" /> class.
         /// </summary>
         /// <param name="typeWithAllCards">The type with all cards.</param>
-        /// <param name="comparer">The comparer to use to compare whith default (notfound) value. This is not used for cardname comparisons.</param>
+        /// <param name="comparer">The comparer to use to compare with default (not found) value. This is not used for cardname comparisons.</param>
         public CardNameLookup(IHasQuerableAllCards<TCard> typeWithAllCards, IEqualityComparer<TCard> comparer) : this(typeWithAllCards.AllCards, comparer)
         {
         }
@@ -52,9 +52,10 @@ namespace Ruzzie.Mtg.Core.Data
         /// Initializes a new instance of the <see cref="CardNameLookup{TCard}"/> class.
         /// </summary>
         /// <param name="allCards">All cards.</param>
-        /// <param name="comparer">The comparer to use to compare whith default (notfound) value. This is not used for cardname comparisons.</param>
+        /// <param name="comparer">The comparer to use to compare with default (not found) value. This is not used for cardname comparisons.</param>
         /// <param name="minProbability">The minimum probability threshold for fuzzy matching. Should be between ~0.7 and 0.99</param>
         /// <exception cref="ArgumentNullException"></exception>
+        // ReSharper disable once MemberCanBePrivate.Global
         public CardNameLookup(IQueryable<TCard> allCards, IEqualityComparer<TCard> comparer, double minProbability = 0.689D)
         {
             if (allCards == null)
@@ -73,7 +74,7 @@ namespace Ruzzie.Mtg.Core.Data
         /// </summary>
         /// <param name="partialName">The partialName.</param>
         /// <param name="minProbability"></param>
-        /// <param name="maxresults">The maxresults.</param>
+        /// <param name="maxResults">The maximum number of results to return.</param>
         /// <returns>
         /// the lookupresults.
         /// </returns>
@@ -82,7 +83,7 @@ namespace Ruzzie.Mtg.Core.Data
         /// minprobability must be > 0
         /// maxresults must be > 0
         /// </exception>
-        public IEnumerable<INameLookupResult<TCard>> LookupCardName(string partialName, double minProbability, int maxresults = 10)
+        public IEnumerable<INameLookupResult<TCard>> LookupCardName(string partialName, double minProbability, int maxResults = 10)
         {
             if (string.IsNullOrWhiteSpace(partialName))
             {
@@ -93,13 +94,13 @@ namespace Ruzzie.Mtg.Core.Data
                 throw new ArgumentOutOfRangeException(nameof(minProbability));
             }
 
-            if (maxresults <= 0)
+            if (maxResults <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(maxresults));
+                throw new ArgumentOutOfRangeException(nameof(maxResults));
             }
 
             //get all fuzzy matches
-            var allFuzzyMatches = _lookupRepository.FindAllFuzzyMatchesAboveThreshold(partialName, minProbability, maxresults);
+            var allFuzzyMatches = _lookupRepository.FindAllFuzzyMatchesAboveThreshold(partialName, minProbability, maxResults);
 
             return
                 allFuzzyMatches.Select(
@@ -113,7 +114,7 @@ namespace Ruzzie.Mtg.Core.Data
         }
 
         /// <summary>
-        /// Finds object matching the (casinsensitive) partialName. If an empty string is passed (also after a trim). The default(TCard) is returned.
+        /// Finds object matching the (case insensitive) partialName. If an empty string is passed (also after a trim). The default(TCard) is returned.
         /// </summary>
         /// <param name="name">The name of the card to find.</param>
         /// <returns>The lookup result.</returns>
@@ -123,7 +124,7 @@ namespace Ruzzie.Mtg.Core.Data
         }
 
         /// <summary>
-        /// Finds object matching the (casinsensitive) partialName. If an empty string is passed (also after a trim). The default(TCard) is returned.
+        /// Finds object matching the (case insensitive) partialName. If an empty string is passed (also after a trim). The default(TCard) is returned.
         /// </summary>
         /// <param name="name">The name of the card to find.</param>
         /// <param name="minProbability">The minimum probability threshold for fuzzy matching. Should be between 0.75 and 0.99</param>
@@ -149,7 +150,7 @@ namespace Ruzzie.Mtg.Core.Data
         {          
             TCard listedCard = _lookupRepository.FindCardByExactName(cardname);
 
-            if (_comparer.Equals(listedCard, Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 return Search(cardname, minProbability);
             }
@@ -168,9 +169,10 @@ namespace Ruzzie.Mtg.Core.Data
             var lookupResult = new NameLookupResult<TCard>();
             cardname = cardname.Replace("�a", "éa");
             cardname = cardname.Replace(AeSingleCharWrongValue, "Ae").Replace("Æ", "Ae");
-            TCard listedCard = _lookupRepository.FindCardByExactName(cardname.Replace(" s ", "\'s ").Replace(" / "," // "));
-           
-            if ( _comparer.Equals(listedCard,Empty))
+            TCard listedCard =
+                _lookupRepository.FindCardByExactName(cardname.Replace(" s ", "\'s ").Replace(" / ", " // "));
+
+            if (IsEmptyOrDefault(listedCard))
             {
                 string synonym = KnownSynonyms.GetSynonym(cardname);
                 if (synonym != null)
@@ -178,10 +180,10 @@ namespace Ruzzie.Mtg.Core.Data
                     listedCard = _lookupRepository.FindCardByExactName(synonym);
                 }
             }
-                    
+
             cardname = cardname.Replace(" s ", "\'s ");
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 var cardWithCommaAfterFirstWord = AddCommaAfterFirstWordIfNoCommaPresent(cardname);
                 if (cardWithCommaAfterFirstWord != cardname)
@@ -190,7 +192,7 @@ namespace Ruzzie.Mtg.Core.Data
                 }
             }
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 var cardWithCommaAfterSecondWord = AddCommaAfterSecondWordIfNoCommaPresent(cardname);
                 if (cardWithCommaAfterSecondWord != cardname)
@@ -199,7 +201,7 @@ namespace Ruzzie.Mtg.Core.Data
                 }
             }
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 var cardWithCommaAfterThirdWord = AddCommaAfterThirdWordIfNoCommaPresent(cardname);
                 if (cardWithCommaAfterThirdWord != cardname)
@@ -208,63 +210,65 @@ namespace Ruzzie.Mtg.Core.Data
                 }
             }
 
-            if ( _comparer.Equals(listedCard,Empty) && cardname.Contains("ther"))
+            if (IsEmptyOrDefault(listedCard) && cardname.Contains("ther"))
             {
                 listedCard = _lookupRepository.FindCardByExactName(cardname.Replace("ther", "Aether"));
-                if ( _comparer.Equals(listedCard,Empty))
+                if (IsEmptyOrDefault(listedCard))
                 {
                     listedCard = _lookupRepository.FindCardByExactName(cardname.Replace("ther", "Æther"));
                 }
             }
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
-                var words = cardname.Split(new[] { " " }, StringSplitOptions.None);
+                var words = cardname.Split(new[] {" "}, StringSplitOptions.None);
                 listedCard = TryFindCardByVariatingWordJoiningOptions(words);
-                if ( _comparer.Equals(listedCard,Empty))
+                if (IsEmptyOrDefault(listedCard))
                 {
                     for (int i = 0; i < words.Length; i++)
                     {
                         var wordEndsWith = "s";
                         var stringToAddAfterWord = "\'";
-                        listedCard = TryFindByVariatingCharacterOnEndOfWord(listedCard, words, i, wordEndsWith, stringToAddAfterWord);
+                        listedCard = TryFindByVariatingCharacterOnEndOfWord(listedCard, words, i, wordEndsWith,
+                            stringToAddAfterWord);
                     }
                 }
 
-                words = cardname.Split(new[] { " " }, StringSplitOptions.None);
-                if ( _comparer.Equals(listedCard,Empty) && words[0].EndsWith("'s", StringComparison.OrdinalIgnoreCase))
+                words = cardname.Split(new[] {" "}, StringSplitOptions.None);
+                if (IsEmptyOrDefault(listedCard) && words[0].EndsWith("'s", StringComparison.OrdinalIgnoreCase))
                 {
                     words[0] = words[0].Replace("\'s", "s\'");
-                    string cardWithApostropheAddedAfterfirstWord = string.Join(" ", words);
-                    listedCard = _lookupRepository.FindCardByExactName(cardWithApostropheAddedAfterfirstWord);
+                    string cardWithApostropheAddedAfterFirstWord = string.Join(" ", words);
+                    listedCard = _lookupRepository.FindCardByExactName(cardWithApostropheAddedAfterFirstWord);
 
-                    if ( _comparer.Equals(listedCard,Empty))
+                    if (IsEmptyOrDefault(listedCard))
                     {
                         listedCard = TryFindCardByVariatingWordJoiningOptions(words);
                     }
                 }
             }
 
-            if (_comparer.Equals(listedCard, Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 var words = cardname.Split(new[] {" "}, StringSplitOptions.None);
                 listedCard = TryFindCardByVariatingWordJoiningOptions(words);
-                if (_comparer.Equals(listedCard, Empty))
+                if (IsEmptyOrDefault(listedCard))
                 {
                     for (int i = 0; i < words.Length; i++)
                     {
                         var wordEndsWith = "s";
                         var stringToAddAfterWord = "\'s";
-                        listedCard = TryFindByVariatingCharacterOnEndOfWord(listedCard, words, i, wordEndsWith, stringToAddAfterWord);
+                        listedCard = TryFindByVariatingCharacterOnEndOfWord(listedCard, words, i, wordEndsWith,
+                            stringToAddAfterWord);
                     }
                 }
             }
 
-            if (_comparer.Equals(listedCard, Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
-                var words = cardname.Split(new[] { " " }, StringSplitOptions.None);
+                var words = cardname.Split(new[] {" "}, StringSplitOptions.None);
                 listedCard = TryFindCardByVariatingWordJoiningOptions(words);
-                if (_comparer.Equals(listedCard, Empty))
+                if (IsEmptyOrDefault(listedCard))
                 {
                     for (int i = 0; i < words.Length; i++)
                     {
@@ -274,25 +278,24 @@ namespace Ruzzie.Mtg.Core.Data
                             string cardWithWordThatEndsInSRemovedS = string.Join(" ", words);
                             listedCard = _lookupRepository.FindCardByExactName(cardWithWordThatEndsInSRemovedS);
 
-                            if (_comparer.Equals(listedCard, Empty))
+                            if (IsEmptyOrDefault(listedCard))
                             {
                                 listedCard = TryFindCardByVariatingWordJoiningOptions(words);
                             }
                         }
                     }
                 }
-
             }
 
             //Lastly do a full fuzzy match if nothing is found so far
-            if (_comparer.Equals(listedCard, Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 FuzzyMatch<TCard> fuzzyMatch = _lookupRepository.FindCardByFuzzyMatch(cardname, minProbability);
                 listedCard = fuzzyMatch.Value;
 
-                if (!_comparer.Equals(listedCard, Empty))
+                if (!IsEmptyOrDefault(listedCard))
                 {
-                    //now we have a fuzzymatch
+                    //now we have a fuzzy match
                     lookupResult.MatchResult = LookupMatchResult.FuzzyMatch;
                     lookupResult.MatchProbability = fuzzyMatch.MatchProbability;
                 }
@@ -307,15 +310,20 @@ namespace Ruzzie.Mtg.Core.Data
             return lookupResult;
         }
 
-        private TCard TryFindByVariatingCharacterOnEndOfWord(TCard listedCard, string[] words, int i, string wordEndsWith, string afterWordWithCharacherString)
+        private bool IsEmptyOrDefault(TCard card)
         {
-            if (_comparer.Equals(listedCard, Empty) && words[i].EndsWith(wordEndsWith, StringComparison.OrdinalIgnoreCase))
+            return _comparer.Equals(card, Empty);
+        }
+
+        private TCard TryFindByVariatingCharacterOnEndOfWord(TCard listedCard, string[] words, int wordIndex, string wordEndsWith, string afterWordWithCharacterString)
+        {
+            if (IsEmptyOrDefault(listedCard) && words[wordIndex].EndsWith(wordEndsWith, StringComparison.OrdinalIgnoreCase))
             {
-                words[i] = words[i] + afterWordWithCharacherString;
+                words[wordIndex] = words[wordIndex] + afterWordWithCharacterString;
                 string cardWithApostrophesAddedAfterWord = string.Join(" ", words);
                 listedCard = _lookupRepository.FindCardByExactName(cardWithApostrophesAddedAfterWord);
 
-                if (_comparer.Equals(listedCard, Empty))
+                if (IsEmptyOrDefault(listedCard))
                 {
                     listedCard = TryFindCardByVariatingWordJoiningOptions(words);
                 }
@@ -331,34 +339,34 @@ namespace Ruzzie.Mtg.Core.Data
                 //check if dual card
                 listedCard = _lookupRepository.FindCardByExactName(string.Join(" // ", words));
 
-                if ( _comparer.Equals(listedCard,Empty))
+                if (IsEmptyOrDefault(listedCard))
                 {
                     listedCard = _lookupRepository.FindCardByExactName(string.Join("-", words));
                 }
             }
 
-            if ( _comparer.Equals(listedCard,Empty) && words.Length == 3)
+            if (IsEmptyOrDefault(listedCard) && words.Length == 3)
             {
                 listedCard = VariateWordsForCardnameWithLengthThree(words);
             }
 
-            if ( _comparer.Equals(listedCard,Empty) && words.Length == 4)
+            if (IsEmptyOrDefault(listedCard) && words.Length == 4)
             {
                 listedCard = VariateWordsForCardnameWithLengthFour(words);
             }
 
-            if ( _comparer.Equals(listedCard,Empty) && words.Length > 2)
+            if (IsEmptyOrDefault(listedCard) && words.Length > 2)
             {
                 //hyphen all words
                 listedCard = _lookupRepository.FindCardByExactName(string.Join("-", words));
             }
 
-            if ( _comparer.Equals(listedCard,Empty) && words.Length > 4)
+            if (IsEmptyOrDefault(listedCard) && words.Length > 4)
             {
                 listedCard = VariateWordsForCardnameWithLengthGreaterThanFour(words);
             }
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 //hyphen first and last two words
                 string[] firstTwoWordsHyphened = CombineNextTwoWords(0, words, "-");
@@ -379,15 +387,17 @@ namespace Ruzzie.Mtg.Core.Data
 
             TCard firstOption = _lookupRepository.FindCardByExactName(leftHyphen);
 
-            //TODO: Check if optimization is possible, bu not calling all findcards before comparing
-            TCard listedCard = !_comparer.Equals(firstOption, Empty) ? firstOption : _lookupRepository.FindCardByExactName(rightHyphen);
+            //TODO: Check if optimization is possible, by not calling all findcards before comparing
+            TCard listedCard = !IsEmptyOrDefault(firstOption)
+                ? firstOption
+                : _lookupRepository.FindCardByExactName(rightHyphen);
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if ( IsEmptyOrDefault(listedCard))
             {
                 listedCard = _lookupRepository.FindCardByExactName(middleHyphen);
             }
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if ( IsEmptyOrDefault(listedCard))
             {
                 //try with , after first word
                 var leftHyphenWithComma = AddCommaAfterFirstWordIfNoCommaPresent(leftHyphen);
@@ -398,12 +408,12 @@ namespace Ruzzie.Mtg.Core.Data
                     listedCard = _lookupRepository.FindCardByExactName(leftHyphenWithComma);
                 }
 
-                if ( _comparer.Equals(listedCard,Empty) && rightHyphenWithComma != rightHyphen)
+                if ( IsEmptyOrDefault(listedCard) && rightHyphenWithComma != rightHyphen)
                 {
                     listedCard = _lookupRepository.FindCardByExactName(rightHyphenWithComma);
                 }
 
-                if ( _comparer.Equals(listedCard,Empty) && middleHyphenWithComma != middleHyphen)
+                if ( IsEmptyOrDefault(listedCard) && middleHyphenWithComma != middleHyphen)
                 {
                     listedCard = _lookupRepository.FindCardByExactName(middleHyphenWithComma);
                 }
@@ -419,10 +429,10 @@ namespace Ruzzie.Mtg.Core.Data
             for (int i = 0; i < words.Length; i++)
             {
                 string[] theWords = CombineNextTwoWords(i, words, "-");
-                string hypenedCardname = string.Join(" ", theWords);
-                listedCard = _lookupRepository.FindCardByExactName(hypenedCardname);
+                string hyphenedCardname = string.Join(" ", theWords);
+                listedCard = _lookupRepository.FindCardByExactName(hyphenedCardname);
 
-                if ( _comparer.Equals(listedCard,Empty))
+                if ( IsEmptyOrDefault(listedCard))
                 {
                     //try with comma after each word
                     for (int j = 0; j < theWords.Length - 1; j++)
@@ -433,7 +443,7 @@ namespace Ruzzie.Mtg.Core.Data
 
                         listedCard = _lookupRepository.FindCardByExactName(string.Join(" ", tmpCardNameWithCommaAfterWord));
 
-                        if (! _comparer.Equals(listedCard,Empty))
+                        if (! IsEmptyOrDefault(listedCard))
                         {
                             return listedCard;
                         }
@@ -487,9 +497,11 @@ namespace Ruzzie.Mtg.Core.Data
             var rightHyphen = words[0] + " " + words[1] + "-" + words[2];
 
             TCard firstOption = _lookupRepository.FindCardByExactName(leftHyphen);
-            TCard listedCard = ! _comparer.Equals(firstOption,Empty) ? firstOption : _lookupRepository.FindCardByExactName(rightHyphen);
+            TCard listedCard = !IsEmptyOrDefault(firstOption)
+                ? firstOption
+                : _lookupRepository.FindCardByExactName(rightHyphen);
 
-            if ( _comparer.Equals(listedCard,Empty))
+            if (IsEmptyOrDefault(listedCard))
             {
                 //try with , after first word
                 var leftHyphenWithComma = AddCommaAfterFirstWordIfNoCommaPresent(leftHyphen);
@@ -499,11 +511,12 @@ namespace Ruzzie.Mtg.Core.Data
                     listedCard = _lookupRepository.FindCardByExactName(leftHyphenWithComma);
                 }
 
-                if ( _comparer.Equals(listedCard,Empty) && rightHyphenWithComma != rightHyphen)
+                if (IsEmptyOrDefault(listedCard) && rightHyphenWithComma != rightHyphen)
                 {
                     listedCard = _lookupRepository.FindCardByExactName(rightHyphenWithComma);
                 }
             }
+
             return listedCard;
         }
 
@@ -630,16 +643,18 @@ namespace Ruzzie.Mtg.Core.Data
 
     internal class FuzzyMatchEqualityComparer<TCard> : IEqualityComparer<FuzzyMatch<TCard>> where TCard : IHasName
     {
-        private readonly CardNameEqualityComparer<TCard> _equalityComparerImplementation = new CardNameEqualityComparer<TCard>(StringComparer.OrdinalIgnoreCase);
+        private static readonly CardNameEqualityComparer<TCard> EqualityComparerImplementation = new CardNameEqualityComparer<TCard>(StringComparer.OrdinalIgnoreCase);
 
         public bool Equals(FuzzyMatch<TCard> x, FuzzyMatch<TCard> y)
-        {
-            return _equalityComparerImplementation.Equals(x.Value, y.Value);
+        {           
+            // ReSharper disable PossibleNullReferenceException
+            return EqualityComparerImplementation.Equals(x.Value, y.Value);
+            // ReSharper restore PossibleNullReferenceException
         }
 
         public int GetHashCode(FuzzyMatch<TCard> obj)
         {
-            return _equalityComparerImplementation.GetHashCode(obj.Value);
+            return EqualityComparerImplementation.GetHashCode(obj.Value);
         }
     }
 
@@ -653,6 +668,7 @@ namespace Ruzzie.Mtg.Core.Data
     internal class CardNameLookupRepository<TCard> : ICardNameLookupRepository<TCard> where TCard : IHasName
     {  
         // ReSharper disable once StaticMemberInGenericType
+        // ReSharper disable once InconsistentNaming
         private static readonly FNV1AHashAlgorithm64 FNV1AHashAlgorithm64 = new FNV1AHashAlgorithm64();
 
         public CardNameLookupRepository(IQueryable<TCard> allCards)
@@ -710,7 +726,7 @@ namespace Ruzzie.Mtg.Core.Data
                 NameLookupDataSource.AllDistinctCards
                     .Where(item => item.Name.RemoveSpecialCharacters().ToUpperInvariant().Contains(cardname.ToUpperInvariant()))
                     .Take(maxResults)
-                    .Select(item => new FuzzyMatch<TCard> { MatchProbability = CalculateProbalityBasedOnContainsMatch(cardname, item), Value = item }).ToList();
+                    .Select(item => new FuzzyMatch<TCard> { MatchProbability = CalculateProbabilityBasedOnContainsMatch(cardname, item), Value = item }).ToList();
 
             if (containsMatch.Count >= maxResults)
             {                
@@ -755,7 +771,7 @@ namespace Ruzzie.Mtg.Core.Data
             return result.Distinct(new FuzzyMatchEqualityComparer<TCard>()).Take(maxResults);
         }
 
-        private static double CalculateProbalityBasedOnContainsMatch(string nameToFind, TCard cardThatContainsString)
+        private static double CalculateProbabilityBasedOnContainsMatch(string nameToFind, TCard cardThatContainsString)
         {
             return (double) nameToFind.Length / cardThatContainsString.Name.Length;
         }
@@ -764,7 +780,7 @@ namespace Ruzzie.Mtg.Core.Data
     internal interface ICardNameLookupDataSource<TCard> where TCard : IHasName
     {
         IQueryable<TCard> AllDistinctCards { get; }
-        Dictionary<long, TCard> HashLookup { get; }
+        IReadOnlyDictionary<long, TCard> HashLookup { get; }
     }
 
     internal class CardNameLookupDataSource<TCard> : ICardNameLookupDataSource<TCard> where TCard : IHasName
@@ -773,6 +789,7 @@ namespace Ruzzie.Mtg.Core.Data
         private Dictionary<long, TCard> _hashLookup;
         private Task _initTask;
         // ReSharper disable once StaticMemberInGenericType
+        // ReSharper disable once InconsistentNaming
         private static readonly FNV1AHashAlgorithm64 FNV1AHashAlgorithm64 = new FNV1AHashAlgorithm64();
 
         public CardNameLookupDataSource(IQueryable<TCard> allCards)
@@ -822,14 +839,13 @@ namespace Ruzzie.Mtg.Core.Data
             }           
         }
 
-        public Dictionary<long, TCard> HashLookup
+        public IReadOnlyDictionary<long, TCard> HashLookup
         {
             get
             {
                 _initTask?.Wait();
                 return _hashLookup;
-            }
-          
+            }        
         }
     }
 }

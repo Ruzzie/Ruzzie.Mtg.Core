@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Text;
 using Ruzzie.Mtg.Core.Data;
-using Ruzzie.Mtg.Core.Parsing;
 
 namespace Ruzzie.Mtg.Core.Parsing
 {
@@ -15,7 +14,7 @@ namespace Ruzzie.Mtg.Core.Parsing
                 throw new ArgumentNullException(nameof(cards));
             }
             var distinctMainBoard = cards.Mainboard.GroupBy(card => card.Card.Name, card => card.Count, (name, counts) => new {Name = name, Count = counts.Sum()});
-            var distincSideBoard = cards.Sideboard.GroupBy(card => card.Card.Name, card => card.Count, (name, counts) => new {Name = name, Count = counts.Sum()});
+            var distinctSideBoard = cards.Sideboard.GroupBy(card => card.Card.Name, card => card.Count, (name, counts) => new {Name = name, Count = counts.Sum()});
 
             StringBuilder textOutput = new StringBuilder();
 
@@ -27,7 +26,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             if (cards.Sideboard.Count > 0)
             {
                 textOutput.AppendLine("Sideboard");
-                foreach (var item in distincSideBoard)
+                foreach (var item in distinctSideBoard)
                 {
                     textOutput.AppendLine($"{item.Count} {item.Name}");
                 }

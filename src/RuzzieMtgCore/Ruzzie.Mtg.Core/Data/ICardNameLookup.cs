@@ -28,8 +28,8 @@ namespace Ruzzie.Mtg.Core.Data
         /// </summary>
         /// <param name="partialName">The partialName.</param>
         /// <param name="minProbability"></param>
-        /// <param name="maxresults">The maxresults.</param>
+        /// <param name="maxResults">The maxresults.</param>
         /// <returns>the lookupresults.</returns>
-        IEnumerable<INameLookupResult<TCard>> LookupCardName(string partialName, double minProbability, int maxresults = 10);
+        IEnumerable<INameLookupResult<TCard>> LookupCardName(string partialName, double minProbability, int maxResults = 10);
     }
 }

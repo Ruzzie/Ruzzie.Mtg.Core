@@ -7,7 +7,9 @@ namespace Ruzzie.Mtg.Core.Data
     /// </summary>
     public struct CardNameAndCount : IEquatable<CardNameAndCount>
     {
-
+        /// <summary>Initializes a new instance of the <see cref="CardNameAndCount"/> struct.</summary>
+        /// <param name="name">The name.</param>
+        /// <param name="count">The count.</param>
         public CardNameAndCount(string name, int count)
         {
             Name = name;
@@ -54,16 +56,5 @@ namespace Ruzzie.Mtg.Core.Data
         {
             return !left.Equals(right);
         }
-    }
-
-    public struct DeckCard<TCard> where TCard : IHasName
-    {
-        public DeckCard(TCard card, int count)
-        {
-            Card = card;
-            Count = count;
-        }
-        public TCard Card { get; }
-        public int Count { get; set; }
     }
 }

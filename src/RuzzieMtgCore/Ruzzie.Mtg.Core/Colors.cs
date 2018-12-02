@@ -47,7 +47,7 @@ namespace Ruzzie.Mtg.Core
 
         /// <summary>
         /// Creates a <see cref="Color"/> enum with flags for the given input string.
-        /// The expected format is uppercase colorcodes with no spaces ex.: U or UWG or BWGUR etc.
+        /// The expected format is uppercase color codes with no spaces ex.: U or UWG or BWGUR etc.
         /// </summary>
         /// <param name="colorsString">The input color codes string.</param>
         /// <returns></returns>
@@ -66,7 +66,7 @@ namespace Ruzzie.Mtg.Core
 
         /// <summary>
         /// Creates a <see cref="Color"/> enum with flags for the given input string.
-        /// The expected format is uppercase colorcodes with no spaces ex.: []{U} or []{U,W,G} or []{B,W,G,U,R} etc.
+        /// The expected format is uppercase color codes with no spaces ex.: []{U} or []{U,W,G} or []{B,W,G,U,R} etc.
         /// </summary>
         /// <param name="colors">The input color codes array.</param>
         /// <returns></returns>
@@ -79,10 +79,11 @@ namespace Ruzzie.Mtg.Core
 
             Color color = Color.Colorless;
 
-            for (int i = 0; i < colors.Length; i++)
+            var colorsLength = colors.Length;
+            for (int i = 0; i < colorsLength; i++)
             {
                 string colorString = colors[i];
-                if (colorString != "A" && colorString != "L" && colorString != "None")//For backwards compatibility reasons
+                if (colorString != "A" && colorString != "L" && colorString != "None")//For backwards compatibility reasons: Where A: Artifact, L: Land is old color string formats
                 {
                     color |= From(colorString);                
                 }

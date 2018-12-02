@@ -96,12 +96,14 @@ namespace Ruzzie.Mtg.Core.UnitTests.Parsing
 
             //Assert
             parseResult.ResultCode.Should().Be(ParseResultCode.Success, parseResult.Message);
-            Assert.That(cleanedCards[0].Count, Is.EqualTo(3));
-            Assert.That(cleanedCards[1].Count, Is.EqualTo(9));                        
+            cleanedCards.Should()
+                .Contain(item => item.Name == "Island" && item.Count == 9)
+                .And
+                .Contain(item => item.Name == "Ponder" && item.Count == 3);                     
         }
 
         [Test]
-        public void WhenCardIsMoreThanFourAndEightAndNotAMultilpleOfFourAndContainsBasicLandNameCardNameTreatItAsABasicLand()
+        public void WhenCardIsMoreThanFourAndEightAndNotAMultipleOfFourAndContainsBasicLandNameCardNameTreatItAsABasicLand()
         {
             string textDeck = "25 Island Sancuary\n1 Talrand, Sky Summoner";
             var parseResult = _cardNamesFromDeckTextParser.Parse(textDeck);
@@ -110,8 +112,10 @@ namespace Ruzzie.Mtg.Core.UnitTests.Parsing
             var cleanedCards = _cleaner.CleanUpCards(parseResult.Cards);
 
             //Assert
-            Assert.That(cleanedCards[1].Count, Is.EqualTo(25));
-            Assert.That(cleanedCards[1].Name, Is.EqualTo("Island"));
+            cleanedCards.Should()
+                .Contain(item => item.Name == "Island" && item.Count == 25)
+                .And
+                .HaveCount(2);
         }
 
         [Test]
@@ -124,9 +128,10 @@ namespace Ruzzie.Mtg.Core.UnitTests.Parsing
             var cleanedCards = _cleaner.CleanUpCards(parseResult.Cards);
 
             //Assert
-            Assert.That(cleanedCards.Count, Is.EqualTo(5));
-            Assert.That(cleanedCards[2].Count, Is.EqualTo(4));
-            Assert.That(cleanedCards[2].Name, Is.EqualTo("Turn // Burn"));
+            cleanedCards.Should()
+                .Contain(item => item.Name == "Turn // Burn" && item.Count == 4)
+                .And
+                .HaveCount(5);
         }
 
         [Test]

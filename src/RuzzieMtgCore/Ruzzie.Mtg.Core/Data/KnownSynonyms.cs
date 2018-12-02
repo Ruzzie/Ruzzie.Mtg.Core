@@ -4,6 +4,11 @@ namespace Ruzzie.Mtg.Core.Data
     {
         public static string GetSynonym(string cardname)
         {
+            if (string.IsNullOrWhiteSpace(cardname))
+            {
+                return null;
+            }
+
             cardname = cardname.ToLowerInvariant();
 
             if (cardname == "lim d l s vault")

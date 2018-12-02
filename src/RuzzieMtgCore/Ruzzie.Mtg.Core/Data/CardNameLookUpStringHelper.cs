@@ -9,12 +9,24 @@ namespace Ruzzie.Mtg.Core.Data
 
         static CardNameLookUpStringHelper()
         {
-            AllowedCharactersWhenStrippingLookup = new bool[65536];
-            for (char c = '0'; c <= '9'; c++) AllowedCharactersWhenStrippingLookup[c] = true;
-            for (char c = 'A'; c <= 'Z'; c++) AllowedCharactersWhenStrippingLookup[c] = true;
-            for (char c = 'a'; c <= 'z'; c++) AllowedCharactersWhenStrippingLookup[c] = true;
-            AllowedCharactersWhenStrippingLookup[' '] = true;//Allow spaces
+            AllowedCharactersWhenStrippingLookup = new bool[char.MaxValue];
+            
+            for (char c = '0'; c <= '9'; c++)
+            {
+                AllowedCharactersWhenStrippingLookup[c] = true;
+            }
 
+            for (char c = 'A'; c <= 'Z'; c++)
+            {
+                AllowedCharactersWhenStrippingLookup[c] = true;
+            }
+
+            for (char c = 'a'; c <= 'z'; c++)
+            {
+                AllowedCharactersWhenStrippingLookup[c] = true;
+            }
+
+            AllowedCharactersWhenStrippingLookup[' '] = true; //Allow spaces
         }
 
         /// <summary>

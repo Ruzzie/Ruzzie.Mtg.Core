@@ -13,8 +13,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             }
 
             string[] lines = cardsText.Trim().Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries);
-
-           
+          
             return ParseAllLines(deckTextParseOptions, lines);
         }
 
@@ -44,9 +43,9 @@ namespace Ruzzie.Mtg.Core.Parsing
 
                 if (skipLine)
                 {
-                    skipLine = false;
                     continue;
                 }
+
                 CardNameAndCount cardCountAndCard = ParseLine(trimmedLine);
 
                 if (cardCountAndCard.Name == null)
@@ -72,7 +71,7 @@ namespace Ruzzie.Mtg.Core.Parsing
         }
 
 
-        private CardNameAndCount ParseLine(string line)
+        private static CardNameAndCount ParseLine(string line)
         {
             //a line looks like:[number][space][text]
 
@@ -85,14 +84,15 @@ namespace Ruzzie.Mtg.Core.Parsing
 
             if (splittedLineByAllWhitespaces.Length > 0)
             {
+                //The first element should be a number, try to parse it as a number
                 if (int.TryParse(splittedLineByAllWhitespaces[0], out count))
                 {                    
                     //trim the part without the number, that should be the cardname on the line     
-                    if (line.Length > (splittedLineByAllWhitespaces[0].Length + 1))
-                    {
-                        //not an empty cardname
+                    if (line.Length > (splittedLineByAllWhitespaces[0].Length + 1))//when line does not solely contain number
+                    {                        
                         string cardName = line.Substring(splittedLineByAllWhitespaces[0].Length + 1).Trim();
 
+                        //not an empty cardname
                         if (!string.IsNullOrWhiteSpace(cardName))
                         {
                             card = cardName;
@@ -101,8 +101,7 @@ namespace Ruzzie.Mtg.Core.Parsing
                         {
                             count = 0;
                         }
-                    }              
-                 
+                    }                               
                 }
             }                           
             return new CardNameAndCount(card, count);
