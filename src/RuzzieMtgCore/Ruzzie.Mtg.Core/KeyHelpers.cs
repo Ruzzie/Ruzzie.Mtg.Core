@@ -28,7 +28,7 @@ namespace Ruzzie.Mtg.Core
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(forwardSlashesReplaceValue));
             }
 
-            return value.Replace("/", "_").ToUpperInvariant();
+            return value.Replace("/", forwardSlashesReplaceValue).ToUpperInvariant();
         }
 
         /// <summary>
