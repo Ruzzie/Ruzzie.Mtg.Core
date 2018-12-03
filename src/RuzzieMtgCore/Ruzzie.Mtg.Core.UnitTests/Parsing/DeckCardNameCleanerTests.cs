@@ -85,6 +85,37 @@ namespace Ruzzie.Mtg.Core.UnitTests.Parsing
         }
 
         [Test]
+        public void UnknownCardShouldBeIgnored()
+        {
+            //Arrange
+            string textDeck = @"2 unknown card
+4 Giant Growth";                        
+            var parseResult = _cardNamesFromDeckTextParser.Parse(textDeck);
+
+            //Act
+            var cleanedCards = _cleaner.CleanUpCards(parseResult.Cards);
+
+            //Assert
+            Assert.That(cleanedCards[0].Count, Is.EqualTo(4));
+            cleanedCards.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void CardWithBasicLandTypeNameShouldBeABasicLand()
+        {
+            //Arrange
+            string textDeck = @"21 Forest Basic Land That ASdklj lkjsd lkj";                        
+            var parseResult = _cardNamesFromDeckTextParser.Parse(textDeck);
+
+            //Act
+            var cleanedCards = _cleaner.CleanUpCards(parseResult.Cards);
+
+            //Assert
+            Assert.That(cleanedCards[0].Count, Is.EqualTo(21));
+            cleanedCards.Count.Should().Be(1);
+        }
+
+        [Test]
         public void CardCountGreaterThanFourAndLessThanEightShouldBeHalvedWhenItIsntABasicLandCardNameMatch()
         {
             //Arrange

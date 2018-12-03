@@ -30,5 +30,17 @@ namespace Ruzzie.Mtg.Core.UnitTests.Synergy
         {
             Assert.That(11F.IncrementSynergyScore(), Is.LessThanOrEqualTo(10F));
         }
+
+        [Test]
+        public void ThrowExceptionWhenIncrementFactorGreaterThanOne()
+        {
+            Assert.That(() => 1f.IncrementSynergyScore(2f), Throws.ArgumentException);
+        }
+
+        [Test]
+        public void ThrowExceptionWhenIncrementFactorLessThanZero()
+        {
+            Assert.That(() => 1f.IncrementSynergyScore(-2f), Throws.ArgumentException);
+        }
     }
 }
