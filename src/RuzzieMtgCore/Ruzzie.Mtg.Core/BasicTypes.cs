@@ -12,25 +12,34 @@ namespace Ruzzie.Mtg.Core
     /// </summary>
     public static class BasicTypes
     {
-        private static readonly ConcurrentDictionary<string,BasicType> EnumNameCache = new ConcurrentDictionary<string, BasicType>(StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, BasicType> EnumNameCache =
+            new ConcurrentDictionary<string, BasicType>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// All Basic land card names upper cased.
         /// A readonly <see cref="ReadOnlySet{String}"/> wrapped around a <see cref="HashSet{String}"/> for fast lookup.
         /// "ISLAND", "PLAINS", "SWAMP", "FOREST", "MOUNTAIN", "SNOW-COVERED ISLAND", "SNOW-COVERED PLAINS", "SNOW-COVERED SWAMP", "SNOW-COVERED FOREST", "SNOW-COVERED MOUNTAIN", "WASTES"
         /// </summary>
-        public static readonly ReadOnlySet<string> BasicLandCardNames = new ReadOnlySet<string>(new HashSet<string>(new[] { "ISLAND", "PLAINS", "SWAMP", "FOREST", "MOUNTAIN", "SNOW-COVERED ISLAND", "SNOW-COVERED PLAINS", "SNOW-COVERED SWAMP", "SNOW-COVERED FOREST", "SNOW-COVERED MOUNTAIN", "WASTES" }, StringComparer.OrdinalIgnoreCase));
+        public static readonly ReadOnlySet<string> BasicLandCardNames = new ReadOnlySet<string>(
+            new HashSet<string>(
+                new[]
+                {
+                    "ISLAND", "PLAINS", "SWAMP", "FOREST", "MOUNTAIN", "SNOW-COVERED ISLAND", "SNOW-COVERED PLAINS",
+                    "SNOW-COVERED SWAMP", "SNOW-COVERED FOREST", "SNOW-COVERED MOUNTAIN", "WASTES"
+                }, StringComparer.OrdinalIgnoreCase));
 
         /// <summary>
         /// A collection of all single values of the possible <see cref="BasicType"/>s.
         /// </summary>
-        public static readonly ReadOnlyCollection<BasicType> AllBasicCardTypes = new ReadOnlyCollection<BasicType>(EnumFlagHelpers<BasicType>.ListAllSingleValues().ToList());
+        public static readonly ReadOnlyCollection<BasicType> AllBasicCardTypes =
+            new ReadOnlyCollection<BasicType>(EnumFlagHelpers<BasicType>.ListAllSingleValues().ToList());
 
         /// <summary>
         /// A Set of all single values of the possible <see cref="BasicType"/>s.
         /// A readonly <see cref="ReadOnlySet{String}"/> wrapped around a <see cref="HashSet{String}"/> for fast lookup.
         /// </summary>
-        public static readonly ReadOnlySet<BasicType> AllBasicCardTypesSet = new ReadOnlySet<BasicType>(AllBasicCardTypes);
+        public static readonly ReadOnlySet<BasicType> AllBasicCardTypesSet =
+            new ReadOnlySet<BasicType>(AllBasicCardTypes);
 
 #pragma warning disable 1591
         public const string Artifact = "Artifact";
@@ -56,10 +65,10 @@ namespace Ruzzie.Mtg.Core
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(typesString));
             }
 
-            return EnumNameCache.GetOrAdd(typesString, FromUncached);
+            return EnumNameCache.GetOrAdd(typesString, FromDelimitedString);
         }
 
-        private static BasicType FromUncached(string typesString)
+        private static BasicType FromDelimitedString(string typesString)
         {
             string[] types = typesString.Split(new[] {" — "}, StringSplitOptions.RemoveEmptyEntries);
 
@@ -69,7 +78,7 @@ namespace Ruzzie.Mtg.Core
         /// <summary>
         /// Parses a string array with al the types and returns a <see cref="BasicType"/> enum for all matching basic types.
         /// </summary>
-        /// <param name="types">All types as a string array with not delimited by space dash space.</param>
+        /// <param name="types">All types as a string array that are not delimited by space dash space.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static BasicType From(string[] types)
@@ -85,7 +94,7 @@ namespace Ruzzie.Mtg.Core
             for (int i = 0; i < typesLength; i++)
             {
                 string currentTypeString = types[i];
-                currentBasicTypes |= EnumNameCache.GetOrAdd(currentTypeString,FromSingleTypeStringLine);
+                currentBasicTypes |= EnumNameCache.GetOrAdd(currentTypeString, FromSingleTypeStringLine);
             }
 
             return currentBasicTypes;
