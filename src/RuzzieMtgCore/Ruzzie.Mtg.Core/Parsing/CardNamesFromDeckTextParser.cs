@@ -9,21 +9,23 @@ namespace Ruzzie.Mtg.Core.Parsing
         {
             if (string.IsNullOrWhiteSpace(cardsText))
             {
-                return new CardParseResult {Message = "input text is null or empty.",ResultCode = ParseResultCode.NotParsedEmptyText };
+                return new CardParseResult
+                    {Message = "input text is null or empty.", ResultCode = ParseResultCode.NotParsedEmptyText};
             }
 
             string[] lines = cardsText.Trim().Split(new[] {"\n"}, StringSplitOptions.RemoveEmptyEntries);
-          
+
             return ParseAllLines(deckTextParseOptions, lines);
         }
 
-        private CardParseResult ParseAllLines(DeckTextParseOptions deckTextParseOptions, string[] lines)
+        private CardParseResult ParseAllLines(DeckTextParseOptions deckTextParseOptions, in string[] lines)
         {
             CardParseResult result = new CardParseResult();
 
             bool inSideboardLines = false;
-            foreach (string line in lines)
+            for (var i = 0; i < lines.Length; i++)
             {
+                string line = lines[i];
                 var trimmedLine = line.Trim();
 
                 bool sideBoardStart = StringComparer.OrdinalIgnoreCase.Equals("sideboard", trimmedLine);
@@ -35,7 +37,7 @@ namespace Ruzzie.Mtg.Core.Parsing
                     break;
                 }
 
-                if(deckTextParseOptions == DeckTextParseOptions.WithSideBoard && sideBoardStart)
+                if (deckTextParseOptions == DeckTextParseOptions.WithSideBoard && sideBoardStart)
                 {
                     inSideboardLines = true;
                     skipLine = true;
@@ -71,7 +73,7 @@ namespace Ruzzie.Mtg.Core.Parsing
         }
 
 
-        private static CardNameAndCount ParseLine(string line)
+        private static CardNameAndCount ParseLine(in string line)
         {
             //a line looks like:[number][space][text]
 

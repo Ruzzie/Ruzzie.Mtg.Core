@@ -1,3 +1,5 @@
+using System;
+using FsCheck;
 using NUnit.Framework;
 
 namespace Ruzzie.Mtg.Core.UnitTests
@@ -13,8 +15,8 @@ namespace Ruzzie.Mtg.Core.UnitTests
             "Rhox Maulers")]
         public void TestBidirectonality(string a, string b)
         {
-            ulong firstKey = a.GenerateBidirectonalKeyForTwoCardNameComparisons(b);
-            ulong secondKey = b.GenerateBidirectonalKeyForTwoCardNameComparisons(a);
+            ulong firstKey = a.GenerateBidirectionalKeyForTwoCardNameComparisons(b);
+            ulong secondKey = b.GenerateBidirectionalKeyForTwoCardNameComparisons(a);
 
             Assert.That(firstKey, Is.EqualTo(secondKey));
         }
@@ -22,8 +24,8 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("Oloro, Ageless Ascetic", "Oloro, Ageless Ascetic", "Kraken's Eye", "Kraken's Eye")]
         public void UniqueTest(string a1, string a2, string b1, string b2)
         {
-            ulong firstKey = a1.GenerateBidirectonalKeyForTwoCardNameComparisons(a2);
-            ulong secondKey = b1.GenerateBidirectonalKeyForTwoCardNameComparisons(b2);
+            ulong firstKey = a1.GenerateBidirectionalKeyForTwoCardNameComparisons(a2);
+            ulong secondKey = b1.GenerateBidirectionalKeyForTwoCardNameComparisons(b2);
 
             Assert.That(firstKey, Is.Not.EqualTo(secondKey));
         }
@@ -34,9 +36,32 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("Onslaught", "Dragon Whisperer", 18369797859162359993UL)]
         public void ValueRegressionTest(string a, string b, ulong expected)
         {
-            ulong firstKey = a.GenerateBidirectonalKeyForTwoCardNameComparisons(b);
+            ulong firstKey = a.GenerateBidirectionalKeyForTwoCardNameComparisons(b);
 
             Assert.That(firstKey, Is.EqualTo(expected));
+        }
+
+        [FsCheck.NUnit.Property]
+        public Property GenerateBidirectionalKeyForTwoCardNameComparisonsReturnsNonZeroUlongForNonEmptyStrings(NonEmptyString one, NonEmptyString two)
+        {
+            Func<bool> check =() => one.Get.GenerateBidirectionalKeyForTwoCardNameComparisons(two.Get) != 0;
+            return check.ToProperty();
+        }
+
+        [FsCheck.NUnit.Property]
+        public Property GenerateBidirectionalKeyForTwoCardNameComparisonsIsOrderIndependent(string one, string two)
+        {
+            Func<bool> check = () =>
+                one.GenerateBidirectionalKeyForTwoCardNameComparisons(two) 
+                ==
+                two.GenerateBidirectionalKeyForTwoCardNameComparisons(one);
+            return check.ToProperty();
+        }
+
+        [FsCheck.NUnit.Property]
+        public void GenerateBidirectionalKeyForTwoCardNameComparisonsQuickCheck(string one, string two)
+        {
+            one.GenerateBidirectionalKeyForTwoCardNameComparisons(two);
         }
     }
 }

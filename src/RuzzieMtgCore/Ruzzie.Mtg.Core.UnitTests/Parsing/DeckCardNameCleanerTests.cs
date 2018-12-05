@@ -65,7 +65,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.Parsing
             //Assert
             Assert.That(cleanedCards[0].Count ,Is.EqualTo(4));
             Assert.That(cleanedCards[0].Name, Is.EqualTo("Boon Satyr"));
-        }
+        }       
 
         [Test]
         public void EAccentCardsShouldBeFound()

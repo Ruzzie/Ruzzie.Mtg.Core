@@ -1,5 +1,3 @@
-using System;
-
 namespace Ruzzie.Mtg.Core
 {
     /// <summary>

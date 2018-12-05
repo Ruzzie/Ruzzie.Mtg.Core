@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Ruzzie.Common.Hashing;
 
 namespace Ruzzie.Mtg.Core
@@ -9,6 +8,7 @@ namespace Ruzzie.Mtg.Core
     /// </summary>
     public static class KeyHelpers
     {
+        public const string DefaultForwardSlashReplaceValue = "_";
         private static readonly FNV1AHashAlgorithm64 HashAlgo64 = new FNV1AHashAlgorithm64();
 
         /// <summary>
@@ -17,18 +17,14 @@ namespace Ruzzie.Mtg.Core
         /// <param name="value">The value.</param>
         /// <param name="forwardSlashesReplaceValue"></param>
         /// <returns></returns>
-        public static string CreateValidUpperCaseKeyForString(this string value, string forwardSlashesReplaceValue = "_")
+        public static string CreateValidUpperCaseKeyForString(this string value, string forwardSlashesReplaceValue = DefaultForwardSlashReplaceValue)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                throw new ArgumentException("Value cannot be null or whitespace.", nameof(value));
-            }
-            if (string.IsNullOrWhiteSpace(forwardSlashesReplaceValue))
-            {
-                throw new ArgumentException("Value cannot be null or whitespace.", nameof(forwardSlashesReplaceValue));
-            }
+                return string.Empty;
+            }          
 
-            return value.Replace("/", forwardSlashesReplaceValue).ToUpperInvariant();
+            return value.Replace("/", forwardSlashesReplaceValue ?? DefaultForwardSlashReplaceValue).ToUpperInvariant();
         }
 
         /// <summary>
@@ -37,9 +33,9 @@ namespace Ruzzie.Mtg.Core
         /// <param name="firstString">The first string.</param>
         /// <param name="secondString">The second string.</param>
         /// <returns></returns>
-        public static ulong GenerateBidirectonalKeyForTwoCardNameComparisons(this string firstString, string secondString)
+        public static ulong GenerateBidirectionalKeyForTwoCardNameComparisons(this string firstString, string secondString)
         {
-            return GenerateBidirectonalKeyForTwoStringComparisons(firstString.CreateValidUpperCaseKeyForString(),
+            return GenerateBidirectionalKeyForTwoStringComparisons(firstString.CreateValidUpperCaseKeyForString(),
                 secondString.CreateValidUpperCaseKeyForString());
         }
 
@@ -49,11 +45,11 @@ namespace Ruzzie.Mtg.Core
         /// <param name="firstString">The first string.</param>
         /// <param name="secondString">The second string.</param>
         /// <returns></returns>
-        public static ulong GenerateBidirectonalKeyForTwoStringComparisons(this string firstString, string secondString)
+        public static ulong GenerateBidirectionalKeyForTwoStringComparisons(this string firstString, string secondString)
         {
             ulong firstStringHash = firstString.GenerateHash64ForStringCaseInsensitive();
             ulong secondStringHash = secondString.GenerateHash64ForStringCaseInsensitive();
-            return firstStringHash.GenerateBidirectonalKeyForTwoULongs(secondStringHash);
+            return firstStringHash.GenerateBidirectionalKeyForTwoULongs(secondStringHash);
         }
 
         /// <summary>
@@ -65,7 +61,7 @@ namespace Ruzzie.Mtg.Core
 #if !PORTABLE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static ulong GenerateBidirectonalKeyForTwoULongs(this ulong firstUlong, ulong secondUlong)
+        public static ulong GenerateBidirectionalKeyForTwoULongs(this ulong firstUlong, ulong secondUlong)
         {
             unchecked
             {
@@ -83,7 +79,7 @@ namespace Ruzzie.Mtg.Core
 #endif
         public static ulong GenerateHash64ForStringCaseInsensitive(this string value )
         {
-            return (ulong) HashAlgo64.HashStringCaseInsensitive(value);
+            return (ulong) HashAlgo64.HashStringCaseInsensitive(value ?? string.Empty);
         }
     }
 }

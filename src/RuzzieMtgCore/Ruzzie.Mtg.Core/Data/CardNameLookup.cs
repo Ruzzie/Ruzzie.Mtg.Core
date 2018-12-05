@@ -35,7 +35,7 @@ namespace Ruzzie.Mtg.Core.Data
         /// Initializes a new instance of the <see cref="CardNameLookup{TCard}" /> class.
         /// </summary>
         /// <param name="typeWithAllCards">The type with all cards.</param>
-        public CardNameLookup(IHasQuerableAllCards<TCard> typeWithAllCards): this(typeWithAllCards.AllCards)
+        public CardNameLookup(IHasQueryableAllCards<TCard> typeWithAllCards): this(typeWithAllCards.AllCards)
         {            
         }
 
@@ -44,7 +44,7 @@ namespace Ruzzie.Mtg.Core.Data
         /// </summary>
         /// <param name="typeWithAllCards">The type with all cards.</param>
         /// <param name="comparer">The comparer to use to compare with default (not found) value. This is not used for cardname comparisons.</param>
-        public CardNameLookup(IHasQuerableAllCards<TCard> typeWithAllCards, IEqualityComparer<TCard> comparer) : this(typeWithAllCards.AllCards, comparer)
+        public CardNameLookup(IHasQueryableAllCards<TCard> typeWithAllCards, IEqualityComparer<TCard> comparer) : this(typeWithAllCards.AllCards, comparer)
         {
         }
 
@@ -722,9 +722,10 @@ namespace Ruzzie.Mtg.Core.Data
             var result = new List<FuzzyMatch<TCard>>();
             cardname = cardname.Trim().RemoveSpecialCharacters();
 
+            var cardNameUpperInvariant = cardname.ToUpperInvariant();
             var containsMatch =
                 NameLookupDataSource.AllDistinctCards
-                    .Where(item => item.Name.RemoveSpecialCharacters().ToUpperInvariant().Contains(cardname.ToUpperInvariant()))
+                    .Where(item => item.Name.RemoveSpecialCharacters().ToUpperInvariant().Contains(cardNameUpperInvariant))
                     .Take(maxResults)
                     .Select(item => new FuzzyMatch<TCard> { MatchProbability = CalculateProbabilityBasedOnContainsMatch(cardname, item), Value = item }).ToList();
 
@@ -771,7 +772,7 @@ namespace Ruzzie.Mtg.Core.Data
             return result.Distinct(new FuzzyMatchEqualityComparer<TCard>()).Take(maxResults);
         }
 
-        private static double CalculateProbabilityBasedOnContainsMatch(string nameToFind, TCard cardThatContainsString)
+        private static double CalculateProbabilityBasedOnContainsMatch(in string nameToFind, in TCard cardThatContainsString)
         {
             return (double) nameToFind.Length / cardThatContainsString.Name.Length;
         }

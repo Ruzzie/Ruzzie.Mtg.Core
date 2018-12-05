@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using FluentAssertions;
+using FsCheck;
 using NUnit.Framework;
 using Ruzzie.Mtg.Core.Parsing;
 
@@ -161,6 +163,54 @@ Sideboard
 
             Assert.That(result.Sideboard.Count, Is.EqualTo(5));
             Assert.That(result.Sideboard.Sum(item => item.Count), Is.EqualTo(15));
+        }
+
+        [FsCheck.NUnit.Property]
+        public void CleanUpCardsQuickCheck(string input)
+        {        
+            //Act
+            _parser.Parse(input, DeckTextParseOptions.WithSideBoard);
+        }
+
+        [FsCheck.NUnit.Property]
+        public void CleanUpCardsQuickCheckLineInput(int numberOfCards, string cardName)
+        {
+            //Arrange            
+            string textDeck = $"{numberOfCards} { cardName}";
+
+            //Act
+            _parser.Parse(textDeck, DeckTextParseOptions.WithSideBoard);
+        }
+
+        [FsCheck.NUnit.Property]
+        public void CleanUpCardsQuickCheckSuccess(NonZeroInt numberOfCards, NonWhiteSpaceString cardName)
+        {
+            //Arrange
+            var cardNameNoLineBreaks = cardName.Get.Replace("\n", "");
+            string textDeck = $"{numberOfCards.Get} {cardNameNoLineBreaks}";
+
+            //Act
+            var parseResult = _parser.Parse(textDeck);
+            
+            //Assert
+            parseResult.ResultCode.Should().Be(ParseResultCode.Success, parseResult.Message);
+            Assert.That(parseResult.Cards[0].Count ,Is.EqualTo(numberOfCards.Get));
+            Assert.That(parseResult.Cards[0].Name, Is.EqualTo(cardNameNoLineBreaks.Trim()));
+        }
+
+        [Test]
+        [TestCase(1, "a")]
+        [TestCase(1,"\u0011")]
+        public void CleanUpCardsChecks(int numberOfCards, string cardName)
+        {
+            string textDeck = $"{numberOfCards} {cardName}";
+
+            //Act
+            var parseResult = _parser.Parse(textDeck);
+
+            //Assert
+            Assert.That(parseResult.Cards[0].Count ,Is.EqualTo(numberOfCards));
+            Assert.That(parseResult.Cards[0].Name, Is.EqualTo(cardName));
         }
     }
 }

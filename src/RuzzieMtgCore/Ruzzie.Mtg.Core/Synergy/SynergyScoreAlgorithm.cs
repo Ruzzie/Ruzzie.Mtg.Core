@@ -27,28 +27,30 @@ namespace Ruzzie.Mtg.Core.Synergy
         }
 
         /// <summary>
-        /// Increments the synergy score.
+        /// Increments the synergy score on a curve to a maximum of 10f. With an increment factor of 1f. The first increment will increase the score by 1/4. And will continue to do so. The more increments, the slower the score will grow.
+        /// For example. you start with a score of 1 and increment it a 100 times and compare it to 1 incremented 200 times. That difference will be smaller that calling increment 1 and 2 times.
+        /// </summary>
+        /// <param name="currentScore">The current score.</param>        
+        /// <returns>The new score</returns>   
+        public static float IncrementSynergyScore(this float currentScore)
+        {
+            return IncrementSynergyScore(currentScore, 1f);
+        }
+
+        /// <summary>
+        /// Increments the synergy score on a curve to a maximum of 10f. The first increment will increase the score by 1/4. And will continue to do so. The more increments, the slower the score will grow.
+        /// For example. you start with a score of 1 and increment it a 100 times and compare it to 1 incremented 200 times. That difference will be smaller that calling increment 1 and 2 times.
         /// </summary>
         /// <param name="currentScore">The current score.</param>
-        /// <param name="incrementFactor">The increment factor.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">
-        /// incrementFactor should be a value between 0 and 1. Current value is: {incrementFactor}
-        /// or
-        /// Increment should be a value between 0 and 1. Current value is: {incrementFactor}
-        /// </exception>
-        public static float IncrementSynergyScore(this float currentScore, float incrementFactor = 1)
+        /// <param name="incrementFactor">The increment value.</param>
+        /// <returns>The new score</returns>   
+        public static float IncrementSynergyScore(this float currentScore, ConstrainedValue<float, BetweenZeroAndOne> incrementFactor)
         {
-            if (incrementFactor > 1)
-            {
-                throw new ArgumentException($"incrementFactor should be a value between 0 and 1. Current value is: {incrementFactor}", nameof(incrementFactor));
-            }
-
-            if (incrementFactor < 0)
-            {
-                throw new ArgumentException($"Increment should be a value between 0 and 1. Current value is: {incrementFactor}", nameof(incrementFactor));
-            }
-
+            return IncrementSynergyScore(currentScore, incrementFactor.Value);
+        }
+       
+        private static float IncrementSynergyScore(this float currentScore, float incrementFactor)
+        {          
             if (currentScore.IsZero())
             {
                 return incrementFactor;
@@ -56,12 +58,22 @@ namespace Ruzzie.Mtg.Core.Synergy
 
             if (incrementFactor.IsZero())
             {
-                return currentScore;
+                if (currentScore < MaxScore)
+                {
+                    return currentScore;
+                }
+
+                return MaxScore;
+            }
+
+            if (float.IsPositiveInfinity(currentScore) || float.IsNegativeInfinity(currentScore))
+            {
+                return MaxScore;
             }
 
             float totalIncrement = ((incrementFactor * 0.25F) / currentScore);
 
-            if (totalIncrement > incrementFactor)
+            if (totalIncrement > incrementFactor && (currentScore + incrementFactor < MaxScore))
             {
                 return currentScore + incrementFactor;
             }
@@ -73,7 +85,7 @@ namespace Ruzzie.Mtg.Core.Synergy
                 newScore = currentScore + totalIncrement;
             }
 
-            if (newScore > MaxScore)
+            if (newScore >= MaxScore)
             {
                 return MaxScore;
             }

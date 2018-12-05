@@ -2,19 +2,22 @@
 
   <PropertyGroup>
     <Description>Some shared types for my Mtg project</Description>
-    <Copyright>Copyright © Dorus Verhoeckx 2017</Copyright>
+    <Copyright>Copyright © Dorus Verhoeckx 2018</Copyright>
     <AssemblyTitle>Ruzzie.Mtg.Core</AssemblyTitle>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Dorus Verhoeckx</Authors>
-    <TargetFrameworks>netcoreapp1.0;netstandard1.6;net46;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;netstandard2.0;net46;net461;net472</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Ruzzie.Mtg.Core</AssemblyName>
     <PackageId>Ruzzie.Mtg.Core</PackageId>
     <PackageProjectUrl>https://github.com/Ruzzie/Ruzzie.Mtg.Core</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Ruzzie/Ruzzie.Mtg.Core/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>git://github.com/Ruzzie/Ruzzie.Mtg.Core</RepositoryUrl>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
+    <RepositoryUrl>git://github.com/Ruzzie/Ruzzie.Mtg.Core</RepositoryUrl>    
+    <License>MIT</License>
+    <!-- including PDB files in NuGet for source link because symbolsource.org does not support portable PDBs -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder> 
+
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -23,38 +26,23 @@
     <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ruzzie.Cache.FlashCache" Version="2.0.101" />
-    <PackageReference Include="Ruzzie.Common" Version="1.0.49" />
-    <PackageReference Include="Ruzzie.FuzzyStrings" Version="2.1.14" />
+    <PackageReference Include="Ruzzie.Cache.FlashCache" Version="3.0.0.113" />
+    <PackageReference Include="Ruzzie.Common" Version="4.0.0.73" />
+    <PackageReference Include="Ruzzie.FuzzyStrings" Version="3.0.0.23" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
-    <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <DefineConstants>$(DefineConstants);HAVE_SERIALIZABLE;HAVE_STRINGINTERN;HAVE_FULL_REFLECTION;HAVE_STRINGCOMPARISONINVARIANTCULTURE</DefineConstants>
-  </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-  
-   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <DefineConstants>$(DefineConstants);HAVE_SERIALIZABLE;HAVE_STRINGINTERN;HAVE_FULL_REFLECTION;HAVE_STRINGCOMPARISONINVARIANTCULTURE</DefineConstants>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' Or '$(TargetFramework)' == 'net451' Or '$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net472' ">
+    <DefineConstants>$(DefineConstants);HAVE_FULL_REFLECTION;HAVE_SERIALIZABLE;HAVE_METHODINLINING;HAVE_TYPEISASSIGNABLEFROM;HAVE_FILEINFO;HAVE_STRINGCOMPARISONINVARIANTCULTURE;HAVE_STRINGINTERN</DefineConstants>
   </PropertyGroup>
 
 </Project>

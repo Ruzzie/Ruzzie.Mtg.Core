@@ -10,7 +10,7 @@ namespace Ruzzie.Mtg.Core.Parsing
     {
         private readonly ICardNameLookup<TCard> _cardNameLookup;
 
-        public DeckCardNameCleaner(ICardNameLookup<TCard> cardNameLookup)
+        public DeckCardNameCleaner(in ICardNameLookup<TCard> cardNameLookup)
         {
             if (cardNameLookup == null)
             {
@@ -19,7 +19,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             _cardNameLookup = cardNameLookup;
         }
 
-        public List<CardNameAndCount> CleanUpCards(List<CardNameAndCount> cardList)
+        public List<CardNameAndCount> CleanUpCards(in IReadOnlyList<CardNameAndCount> cardList)
         {
             if (cardList == null)
             {
@@ -30,7 +30,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             return nameObjectDictionary.Values.Select(x => new CardNameAndCount(x.Card.Name, x.Count)).ToList();
         }
 
-        private ConcurrentDictionary<string, DeckCard<TCard>> CleanCardsForListAndReturnDeckCardDictionaryByCardName(List<CardNameAndCount> cardList)
+        private ConcurrentDictionary<string, DeckCard<TCard>> CleanCardsForListAndReturnDeckCardDictionaryByCardName(in IReadOnlyList<CardNameAndCount> cardList)
         {
             var nameObjectDictionary = new ConcurrentDictionary<string, DeckCard<TCard>>(StringComparer.OrdinalIgnoreCase);
 
@@ -58,7 +58,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             return nameObjectDictionary;
         }
 
-        private DeckCard<TCard> CleanCardEntry(CardNameAndCount cardNameAndCount)
+        private DeckCard<TCard> CleanCardEntry(in CardNameAndCount cardNameAndCount)
         {
             var lookupResult = _cardNameLookup.FindCardByName(cardNameAndCount.Name);
 
@@ -113,7 +113,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             return new DeckCard<TCard>(currentCard, newCount);
         }
 
-        public DeckCards<TCard> CleanUpCards(List<CardNameAndCount> mainboard, List<CardNameAndCount> sideboard)
+        public DeckCards<TCard> CleanUpCards(in IReadOnlyList<CardNameAndCount> mainboard, in IReadOnlyList<CardNameAndCount> sideboard)
         {
             if (mainboard == null)
             {
@@ -125,7 +125,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             }
             var cleanedMainboard = CleanCardsForListAndReturnDeckCardDictionaryByCardName(mainboard);
             var cleanedSideBoard = CleanCardsForListAndReturnDeckCardDictionaryByCardName(sideboard);
-            return new DeckCards<TCard> {Mainboard = cleanedMainboard.Values.ToList(), Sideboard = cleanedSideBoard.Values.ToList() };
+            return new DeckCards<TCard>(cleanedMainboard.Values.ToList(), cleanedSideBoard.Values.ToList());
         }
 
         // ReSharper disable StaticMemberInGenericType

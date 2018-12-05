@@ -6,7 +6,7 @@ namespace Ruzzie.Mtg.Core.Data
     /// Interface to indicate the AllCards property, this is a required type for the <see cref="CardNameLookup{TCard}"/>
     /// </summary>
     /// <typeparam name="TCard">The type of the card.</typeparam>
-    public interface IHasQuerableAllCards<out TCard> where TCard : IHasName
+    public interface IHasQueryableAllCards<out TCard> where TCard : IHasName
     {
         /// <summary>
         /// Gets all cards.

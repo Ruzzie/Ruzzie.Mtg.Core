@@ -23,6 +23,13 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             //Assert
             Assert.That(result.ResultObject.Name, Is.EqualTo("Lim-Dûl's Vault"));
         }
+        
+        [FsCheck.NUnit.Property]
+        public void QuickCheck(string input)
+        {
+            //Act
+            _cardNameLookup.FindCardByName(input);
+        }
 
         [Test]
         public void CtorTest()
@@ -136,13 +143,11 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             var cardName = KnownSynonyms.GetSynonym("fa adiyah seer");
             var dataSource = new CardNameLookupDataSource<TestCard>(CreateAllCardsTestList().AsQueryable());
 
-
             var algo = new FNV1AHashAlgorithm64();
             var hash = algo.HashStringCaseInsensitive(cardName.CreateValidUpperCaseKeyForString());
 
             dataSource.HashLookup[hash].Should().NotBeNull();
-            TestCard foundCard;
-            dataSource.HashLookup.TryGetValue(hash, out foundCard).Should().BeTrue();
+            dataSource.HashLookup.TryGetValue(hash, out _).Should().BeTrue();
 
             hash.Should().Be(algo.HashStringCaseInsensitive(cardName.CreateValidUpperCaseKeyForString()));
         }
@@ -157,7 +162,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
         [TestCase("asfasfjsdlkgjslkgjslkdgjdflkgjk", 0)]
         public void MultipleProbableResultsWhenNoExactResultIsFound(string search, int expectedResults)
         {
-            var results = _cardNameLookup.LookupCardName(search, 0.33, 10);
+            var results = _cardNameLookup.LookupCardName(search, 0.33);
 
             results.Count().Should().Be(expectedResults);
         }
@@ -241,7 +246,7 @@ namespace Ruzzie.Mtg.Core.UnitTests.Data
             public string Name { get; set; }
         }
 
-        public class TestCardContainer : IHasQuerableAllCards<TestCard>
+        public class TestCardContainer : IHasQueryableAllCards<TestCard>
         {
             public IQueryable<TestCard> AllCards { get { return CreateAllCardsTestList().AsQueryable(); } }
         }
