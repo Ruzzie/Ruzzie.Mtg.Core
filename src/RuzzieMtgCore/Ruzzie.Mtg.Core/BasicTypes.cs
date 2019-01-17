@@ -33,6 +33,11 @@ namespace Ruzzie.Mtg.Core
         /// </summary>
         public static readonly ReadOnlyCollection<BasicType> AllBasicCardTypes =
             new ReadOnlyCollection<BasicType>(EnumFlagHelpers<BasicType>.ListAllSingleValues().ToList());
+        
+        /// <summary>
+        /// Value that contains all BasicType enum flags combined. (All bits are set to 1)
+        /// </summary>
+        public static readonly BasicType AllBasicTypesFlags = EnumFlagHelpers<BasicType>.GetValueWithAllFlagsSet();
 
         /// <summary>
         /// A Set of all single values of the possible <see cref="BasicType"/>s.

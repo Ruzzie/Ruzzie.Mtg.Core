@@ -4,7 +4,10 @@ namespace Ruzzie.Mtg.Core
     /// Helper for the <see cref="Format"/> enum.
     /// </summary>
     public static class Formats
-    {      
+    {
+        /// <summary>Value that contains all Format enum flags combined. (All bits are set to 1)</summary>
+        public static readonly Format AllFormats = EnumFlagHelpers<Format>.GetValueWithAllFlagsSet();
+
         /// <summary>
         /// Determines whether the specified contains <b>any</b> of the formatToCheck flags.
         /// </summary>

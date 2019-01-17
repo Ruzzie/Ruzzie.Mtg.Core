@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Ruzzie.Mtg.Core.UnitTests
@@ -80,6 +81,14 @@ namespace Ruzzie.Mtg.Core.UnitTests
         public void NonEnumFlagTypeThrowsException()
         {
             Assert.That(EnumFlagHelpers<NonFlagTypeEnum>.ListAllPossibleUniqueFlagsCombinations, Throws.ArgumentException);
+        }
+
+        [Test]
+        public void GetValueWithAllFlagsSet()
+        {
+            var value = EnumFlagHelpers<ShortFlagTypeEnum>.GetValueWithAllFlagsSet();
+
+            value.Should().Be(ShortFlagTypeEnum.A | ShortFlagTypeEnum.B | ShortFlagTypeEnum.C);
         }
 
         // ReSharper disable UnusedMember.Local

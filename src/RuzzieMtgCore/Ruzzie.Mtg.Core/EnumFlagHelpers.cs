@@ -14,7 +14,7 @@ namespace Ruzzie.Mtg.Core
 
         static EnumFlagHelpers()
         {
-            TypeInfo = GetEnumTypeInfo(typeof(T));
+            TypeInfo = CreateEnumTypeInfo(typeof(T));
         }
 
         private static Func<T, T, T> GenerateBitwiseOr()
@@ -80,7 +80,7 @@ namespace Ruzzie.Mtg.Core
             return uniqueValues;
         }
 
-        private static EnumTypeInfo GetEnumTypeInfo(Type type)
+        private static EnumTypeInfo CreateEnumTypeInfo(Type type)
         {
             EnumTypeInfo enumTypeInfo = new EnumTypeInfo {IsEnum = type.IsEnum(), HasFlagsAttribute = type.GetCustomAttributeForType(typeof(FlagsAttribute)) != null};
 
@@ -91,10 +91,47 @@ namespace Ruzzie.Mtg.Core
                 {
                     enumTypeInfo.BitwiseOr = GenerateBitwiseOr();
                     enumTypeInfo.UniqueValues = GenerateUniqueValues(type, enumTypeInfo.BitwiseOr);
+                    enumTypeInfo.ValueWithAllFlagsSet =
+                        GenerateValueWithAllFlagsSet(enumTypeInfo.SingleValues, enumTypeInfo.BitwiseOr);
                 }
             }
          
             return enumTypeInfo;
+        }
+
+        private static T GenerateValueWithAllFlagsSet(IReadOnlyCollection<T> singleValues, Func<T, T, T> bitwiseOr)
+        {
+            T result = default(T);
+            foreach (var singleFlagValue in singleValues)
+            {
+                result = bitwiseOr(result, singleFlagValue);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the value with all flags set.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">
+        /// T is not an enum
+        /// or
+        /// T does not have the Flags Attribute set
+        /// </exception>
+        public static T GetValueWithAllFlagsSet()
+        {
+            if (!TypeInfo.IsEnum)
+            {
+                throw new ArgumentException("T is not an enum");
+            }
+
+            if (!TypeInfo.HasFlagsAttribute)
+            {
+                throw new ArgumentException("T does not have the Flags Attribute set");
+            }
+
+            return TypeInfo.ValueWithAllFlagsSet;
         }
 
         /// <summary>
@@ -152,6 +189,7 @@ namespace Ruzzie.Mtg.Core
             public bool HasFlagsAttribute { get; set; }
             public IReadOnlyCollection<T> UniqueValues { get; set; }
             public IReadOnlyCollection<T> SingleValues { get; set; }
+            public T ValueWithAllFlagsSet { get; set; }
         }
     }
 }
