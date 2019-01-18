@@ -51,16 +51,16 @@ namespace Ruzzie.Mtg.Core
         /// </summary>
         /// <param name="colorsString">The input color codes string.</param>
         /// <returns></returns>
-        public static Color From(string colorsString)
+        public static Color From(in string colorsString)
         {
             if (colorsString == null)
             {
                 return Color.Colorless;
             }
 #if HAVE_STRINGINTERN
-            return EnumNameCache.GetOrAdd(string.Intern(colorsString), FromUncached);
+            return EnumNameCache.GetOrAdd(string.Intern(colorsString), FromUncached(colorsString));
 #else
-             return EnumNameCache.GetOrAdd(colorsString, FromUncached);
+             return EnumNameCache.GetOrAdd(colorsString, FromUncached(colorsString));
 #endif
         }
 
@@ -70,7 +70,7 @@ namespace Ruzzie.Mtg.Core
         /// </summary>
         /// <param name="colors">The input color codes array.</param>
         /// <returns></returns>
-        public static Color From(string[] colors)
+        public static Color From(in string[] colors)
         {
             if (colors == null || colors.Length == 0)
             {
@@ -83,7 +83,11 @@ namespace Ruzzie.Mtg.Core
             for (int i = 0; i < colorsLength; i++)
             {
                 string colorString = colors[i];
-                if (colorString != "A" && colorString != "L" && colorString != "None")//For backwards compatibility reasons: Where A: Artifact, L: Land is old color string formats
+
+                //For backwards compatibility reasons: Where A: Artifact, L: Land is old color string formats
+                if (!string.Equals(colorString, "A", StringComparison.Ordinal) 
+                    && !string.Equals(colorString, "L", StringComparison.Ordinal) 
+                    && !string.Equals(colorString, "None", StringComparison.Ordinal))
                 {
                     color |= From(colorString);                
                 }
@@ -141,14 +145,20 @@ namespace Ruzzie.Mtg.Core
             return iCount;
         }
 
-        private static Color FromUncached(string colorsIdentityString)
+        private static Color FromUncached(in string colorsIdentityString)
         {
             int numberOfColors = colorsIdentityString?.Length ?? 0;
+            if (numberOfColors == 0)
+            {
+                return Color.Colorless;
+            }
+
             Color colorIdentity = Color.Colorless;
             for (int i = 0; i < numberOfColors; i++)
             {
                 Color enumResult;
-                if (Enum.TryParse(colorsIdentityString?[i].ToString(), true, out enumResult))
+                // ReSharper disable once PossibleNullReferenceException
+                if (Enum.TryParse(colorsIdentityString[i].ToString(), true, out enumResult))
                 {
                     colorIdentity |= enumResult;
                 }

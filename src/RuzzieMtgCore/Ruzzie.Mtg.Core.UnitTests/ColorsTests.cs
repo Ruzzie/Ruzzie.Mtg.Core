@@ -9,14 +9,24 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("B", Color.B)]
         [TestCase("WUB", Color.B | Color.W | Color.U)]
         [TestCase("WUB ", Color.B | Color.W | Color.U)]
+        [TestCase("wub ", Color.B | Color.W | Color.U)]
         [TestCase("", Color.Colorless)]
+        [TestCase(" ", Color.Colorless)]
         [TestCase(null, Color.Colorless)]
+        [TestCase("jklhnm", Color.Colorless)]
         [TestCase("C", Color.Colorless)]
         public void ColorsIdentityStringToColorsIdentityEnumTest(string colorsIdentityString, Color expectedIdentity)
         {
             Color colorIdentity = Colors.From(colorsIdentityString);
 
             Assert.That(colorIdentity, Is.EqualTo(expectedIdentity));
+        }
+
+        [FsCheck.NUnit.Property]
+        public void ColorsIdentityStringToColorsIdentityEnumTestPropertiesSmokeTest(string input)
+        {
+            //Assert that no exception occurs
+           Colors.From(input);
         }
 
         [Test]
