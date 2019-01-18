@@ -62,6 +62,18 @@ namespace Ruzzie.Mtg.Core.UnitTests.Parsing
         }
 
         [Test]
+        public void MustReturnValidResultWithWindowsLineBreaks()
+        {
+            string cardsAsText = "4 Spear of Heliod\r\n4 Brave the Elements\r\n4 Frontline Medic";
+
+            CardParseResult result = _parser.Parse(cardsAsText);
+
+            result.Cards[0].Name.Should().Be("Spear of Heliod");
+            Assert.That(result.Cards.Count, Is.EqualTo(3));
+            Assert.That(result.Cards.Sum(item => item.Count), Is.EqualTo(12));
+        }
+
+        [Test]
         public void CardListMustNotContainSideboard()
         {
             string cardsAsText = @"4 Spear of Heliod
