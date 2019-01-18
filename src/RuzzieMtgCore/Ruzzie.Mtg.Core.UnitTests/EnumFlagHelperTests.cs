@@ -71,11 +71,12 @@ namespace Ruzzie.Mtg.Core.UnitTests
                     );
         }
 
-        [Test]
-        public void NonEnumTypeThrowsException()
-        {
-            Assert.That(EnumFlagHelpers<int>.ListAllPossibleUniqueFlagsCombinations, Throws.ArgumentException);
-        }
+        ///Unneeded test now , Enum can now be used as a type constraint
+        /// /[Test]
+        //public void NonEnumTypeThrowsException()
+        //{
+        //    Assert.That(EnumFlagHelpers<int>.ListAllPossibleUniqueFlagsCombinations, Throws.ArgumentException);
+        //}
 
         [Test]
         public void NonEnumFlagTypeThrowsException()

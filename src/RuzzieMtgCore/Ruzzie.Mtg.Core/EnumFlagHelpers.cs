@@ -8,7 +8,7 @@ namespace Ruzzie.Mtg.Core
     /// Helper for Enums with the Flags type.
     /// </summary>
     /// <typeparam name="T">The Enum type</typeparam>
-    public static class EnumFlagHelpers<T> where T : struct, IConvertible, IComparable, IFormattable
+    public static class EnumFlagHelpers<T> where T : Enum, IConvertible, IComparable, IFormattable
     {
         private static readonly EnumTypeInfo TypeInfo;
 
