@@ -7,7 +7,9 @@ namespace Ruzzie.Mtg.Core.UnitTests
     public class BasicTypesTests
     {
         [TestCase("Artifact Creature — Soldier", BasicType.Artifact | BasicType.Creature)]
-        [TestCase("Artifact", BasicType.Artifact | BasicType.Artifact)]
+        [TestCase("Artifact", BasicType.Artifact)]
+        [TestCase("Artifact   \n", BasicType.Artifact)]
+        [TestCase("Artifact   \n - \r\n", BasicType.Artifact)]
         [TestCase("Artifact - Creature", BasicType.Artifact | BasicType.Creature)]
         [TestCase("Legendary Artifact — Equipment", BasicType.Artifact)]
         [TestCase("Legendary Creature — Eldrazi", BasicType.Creature)]
@@ -27,6 +29,8 @@ namespace Ruzzie.Mtg.Core.UnitTests
         [TestCase("Legendary Enchantment Creature — God", BasicType.Enchantment | BasicType.Creature)]
         [TestCase("Planeswalker — Liliana", BasicType.Planeswalker)]
         [TestCase("Basic Snow Land — Plains", BasicType.BasicLand)]
+        [TestCase("Basic Snow Land   —  Plains  ", BasicType.BasicLand)]
+        [TestCase("Basic Snow Land   —  Plains —  Plains ", BasicType.BasicLand)]
         public void BasicTypesParsingTests(string types, BasicType expectedBasicType)
         {
             BasicTypes.From(types).Should().Be(expectedBasicType);

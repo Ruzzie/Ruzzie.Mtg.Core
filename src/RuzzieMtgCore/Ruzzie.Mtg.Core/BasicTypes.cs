@@ -86,7 +86,7 @@ namespace Ruzzie.Mtg.Core
         /// <param name="types">All types as a string array that are not delimited by space dash space.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static BasicType From(string[] types)
+        public static BasicType From(in string[] types)
         {
             if (types == null)
             {
@@ -98,7 +98,7 @@ namespace Ruzzie.Mtg.Core
             var typesLength = types.Length;
             for (int i = 0; i < typesLength; i++)
             {
-                string currentTypeString = types[i];
+                string currentTypeString = types[i].Trim();
                 currentBasicTypes |= EnumNameCache.GetOrAdd(currentTypeString, FromSingleTypeStringLine);
             }
 
@@ -106,9 +106,9 @@ namespace Ruzzie.Mtg.Core
         }
 
         private static BasicType FromSingleTypeStringLine(string currentTypeString)
-        {
-            if (StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Land") ||
-                StringComparer.OrdinalIgnoreCase.Equals(currentTypeString.Trim(), "Basic Snow Land"))
+        {            
+            if (StringComparer.OrdinalIgnoreCase.Equals(currentTypeString, "Basic Land") ||
+                StringComparer.OrdinalIgnoreCase.Equals(currentTypeString, "Basic Snow Land"))
             {
                 return BasicType.BasicLand;
             }
@@ -119,8 +119,7 @@ namespace Ruzzie.Mtg.Core
             var typeWordsLength = typeWords.Length;
             for (int j = 0; j < typeWordsLength; j++)
             {
-                BasicType enumResult;
-                if (Enum.TryParse(typeWords[j], true, out enumResult))
+                if (Enum.TryParse(typeWords[j], true, out BasicType enumResult))
                 {
                     currentBasicType |= enumResult;
                 }

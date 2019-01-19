@@ -8,6 +8,9 @@ namespace Ruzzie.Mtg.Core
     /// </summary>
     public static class KeyHelpers
     {
+        /// <summary>
+        /// The default forward slash replace value used for escaping strings in keys.
+        /// </summary>
         public const string DefaultForwardSlashReplaceValue = "_";
         private static readonly FNV1AHashAlgorithm64 HashAlgo64 = new FNV1AHashAlgorithm64();
 

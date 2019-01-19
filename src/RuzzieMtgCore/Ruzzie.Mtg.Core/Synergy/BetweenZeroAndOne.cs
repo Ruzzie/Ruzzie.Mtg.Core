@@ -6,7 +6,7 @@ namespace Ruzzie.Mtg.Core.Synergy
     public class BetweenZeroAndOne : IValueConstraint<float>
     {
         /// <inheritdoc />
-        public bool IsWithinConstraint(Single value)
+        public bool IsWithinConstraint(float value)
         {            
             return value >= 0 && value <= 1f;
         }
