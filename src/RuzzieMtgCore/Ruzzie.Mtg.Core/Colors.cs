@@ -58,11 +58,12 @@ namespace Ruzzie.Mtg.Core
                 return Color.Colorless;
             }
 #if HAVE_STRINGINTERN
-            return EnumNameCache.GetOrAdd(string.Intern(colorsString), FromUncached(colorsString));
+            return EnumNameCache.GetOrAdd(string.Intern(colorsString), FromUncached);
 #else
-             return EnumNameCache.GetOrAdd(colorsString, FromUncached(colorsString));
+             return EnumNameCache.GetOrAdd(colorsString, FromUncached);
 #endif
         }
+        
 
         /// <summary>
         /// Creates a <see cref="Color"/> enum with flags for the given input string.
@@ -145,7 +146,7 @@ namespace Ruzzie.Mtg.Core
             return iCount;
         }
 
-        private static Color FromUncached(in string colorsIdentityString)
+        private static Color FromUncached(string colorsIdentityString)
         {
             int numberOfColors = colorsIdentityString?.Length ?? 0;
             if (numberOfColors == 0)
@@ -156,9 +157,8 @@ namespace Ruzzie.Mtg.Core
             Color colorIdentity = Color.Colorless;
             for (int i = 0; i < numberOfColors; i++)
             {
-                Color enumResult;
                 // ReSharper disable once PossibleNullReferenceException
-                if (Enum.TryParse(colorsIdentityString[i].ToString(), true, out enumResult))
+                if (Enum.TryParse(colorsIdentityString[i].ToString(), true, out Color enumResult))
                 {
                     colorIdentity |= enumResult;
                 }
