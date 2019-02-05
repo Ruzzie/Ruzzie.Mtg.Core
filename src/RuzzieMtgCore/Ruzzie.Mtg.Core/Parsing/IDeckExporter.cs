@@ -2,7 +2,7 @@ using Ruzzie.Mtg.Core.Data;
 
 namespace Ruzzie.Mtg.Core.Parsing
 {
-    public interface IDeckExporter<out TOutput, TCard> where TCard : IBasicCardProperties
+    public interface IDeckExporter<out TOutput, TCard> where TCard : IHasName
     {
         TOutput Export(in DeckCards<TCard> cards);
     }

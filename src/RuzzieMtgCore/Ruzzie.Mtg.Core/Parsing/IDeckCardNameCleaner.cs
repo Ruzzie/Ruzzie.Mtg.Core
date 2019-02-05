@@ -4,13 +4,13 @@ using Ruzzie.Mtg.Core.Data;
 
 namespace Ruzzie.Mtg.Core.Parsing
 {
-    public interface IDeckCardNameCleaner<TCard> where TCard : IBasicCardProperties
+    public interface IDeckCardNameCleaner<TCard> where TCard : IHasName
     {
         List<CardNameAndCount> CleanUpCards(in IReadOnlyList<CardNameAndCount> cardList);
         DeckCards<TCard> CleanUpCards(in IReadOnlyList<CardNameAndCount> mainboard, in IReadOnlyList<CardNameAndCount> sideboard);
     }
 
-    public class DeckCards<TCard> where TCard : IBasicCardProperties
+    public class DeckCards<TCard> where TCard : IHasName
     {
         public DeckCards()
         {
