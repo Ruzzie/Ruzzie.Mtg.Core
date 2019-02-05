@@ -206,12 +206,15 @@ Sideboard
         [Test]
         public void SmokeTest()
         {
-            //Arrange
-            DeckCards<IBasicCardProperties> cards = new DeckCards<IBasicCardProperties>();
-            cards.Mainboard.Add(new DeckCard<IBasicCardProperties>(new BasicCardPoco {Name = "Boros Elite"}, 2));
-            cards.Mainboard.Add(new DeckCard<IBasicCardProperties>(new BasicCardPoco {Name = "Boros Elite"}, 2));
-            cards.Sideboard.Add(new DeckCard<IBasicCardProperties>(new BasicCardPoco {Name = "Karakas" }, 3));
+            //Arrange            
+            var mainBoard = new List<IDeckCard<IBasicCardProperties>>();
+            mainBoard.Add(new DeckCard<IBasicCardProperties>(new BasicCardPoco {Name = "Boros Elite"}, 2));
+            mainBoard.Add(new DeckCard<IBasicCardProperties>(new BasicCardPoco {Name = "Boros Elite"}, 2));
 
+            var sideBoard = new List<IDeckCard<IBasicCardProperties>>();
+            sideBoard.Add(new DeckCard<IBasicCardProperties>(new BasicCardPoco {Name = "Karakas" }, 3));
+
+            DeckCards<IBasicCardProperties> cards = new DeckCards<IBasicCardProperties>(mainBoard, sideBoard);
             IDeckExporter<string, IBasicCardProperties> deckExporter = new DeckExporterPlainText<IBasicCardProperties>();
 
             //Act

@@ -1,6 +1,12 @@
 ﻿namespace Ruzzie.Mtg.Core.Data
 {
-    public struct DeckCard<TCard> where TCard : IHasName
+    public interface IDeckCard<out TCard> where TCard : IHasName
+    {
+        TCard Card { get; }
+        int Count { get;  }
+    }
+
+    public struct DeckCard<TCard> : IDeckCard<TCard> where TCard : IHasName
     {
         public DeckCard(TCard card, int count)
         {

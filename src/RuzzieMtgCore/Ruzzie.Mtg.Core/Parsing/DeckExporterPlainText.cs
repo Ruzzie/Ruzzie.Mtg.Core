@@ -7,7 +7,7 @@ namespace Ruzzie.Mtg.Core.Parsing
 {
     public class DeckExporterPlainText<TCard> : IDeckExporter<string, TCard> where TCard : IHasName
     {
-        public string Export(in DeckCards<TCard> cards)
+        public string Export(in IDeckCards<TCard> cards)
         {
             if (cards == null)
             {
@@ -24,7 +24,7 @@ namespace Ruzzie.Mtg.Core.Parsing
                 textOutput.AppendLine($"{item.Count} {item.Name}");
             }
 
-            if (cards.Sideboard.Count > 0)
+            if (cards.Sideboard.Any())
             {
                 textOutput.AppendLine("Sideboard");
                 foreach (var item in distinctSideBoard)

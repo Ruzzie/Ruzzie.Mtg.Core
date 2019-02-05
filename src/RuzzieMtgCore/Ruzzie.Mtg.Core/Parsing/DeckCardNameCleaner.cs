@@ -113,7 +113,7 @@ namespace Ruzzie.Mtg.Core.Parsing
             return new DeckCard<TCard>(currentCard, newCount);
         }
 
-        public DeckCards<TCard> CleanUpCards(in IReadOnlyList<CardNameAndCount> mainboard, in IReadOnlyList<CardNameAndCount> sideboard)
+        public IDeckCards<TCard> CleanUpCards(in IReadOnlyList<CardNameAndCount> mainboard, in IReadOnlyList<CardNameAndCount> sideboard)
         {
             if (mainboard == null)
             {
@@ -123,9 +123,10 @@ namespace Ruzzie.Mtg.Core.Parsing
             {
                 throw new ArgumentNullException(nameof(sideboard));
             }
+            
             var cleanedMainboard = CleanCardsForListAndReturnDeckCardDictionaryByCardName(mainboard);
             var cleanedSideBoard = CleanCardsForListAndReturnDeckCardDictionaryByCardName(sideboard);
-            return new DeckCards<TCard>(cleanedMainboard.Values.ToList(), cleanedSideBoard.Values.ToList());
+            return new DeckCards<TCard>( cleanedMainboard.Values, cleanedSideBoard.Values);
         }
 
         // ReSharper disable StaticMemberInGenericType
