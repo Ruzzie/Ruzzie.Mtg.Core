@@ -5,7 +5,7 @@ using Ruzzie.Mtg.Core.Data;
 
 namespace Ruzzie.Mtg.Core.Parsing
 {
-    public class DeckExporterPlainText<TCard> : IDeckExporter<string, TCard> where TCard : IBasicCardProperties
+    public class DeckExporterPlainText<TCard> : IDeckExporter<string, TCard> where TCard : IHasName
     {
         public string Export(in DeckCards<TCard> cards)
         {
