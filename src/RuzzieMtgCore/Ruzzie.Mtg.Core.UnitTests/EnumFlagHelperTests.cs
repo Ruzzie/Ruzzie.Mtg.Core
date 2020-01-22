@@ -42,7 +42,7 @@ namespace Ruzzie.Mtg.Core.UnitTests
         public void ListOfAllPossibleUniqueForBasicTypesTest()
         {
             var listAllPossibleUniqueFlagsCombinations = EnumFlagHelpers<BasicType>.ListAllPossibleUniqueFlagsCombinations();
-            Assert.That(listAllPossibleUniqueFlagsCombinations.Count, Is.EqualTo(158));
+            Assert.That(listAllPossibleUniqueFlagsCombinations.Count, Is.EqualTo(168));
         }
 
         [Test]

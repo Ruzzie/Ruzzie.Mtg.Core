@@ -68,12 +68,13 @@ namespace Ruzzie.Mtg.Core
                     uniqueValues.Add(combinedValue);
 
                     T otherCombinedValue = secondValue;
-                    for (int k = i; k < values.Length; k++)
+                    for (int k = i+1; k < values.Length; k++)
                     {
                         T kValue = (T) values.GetValue(k);
                         otherCombinedValue = bitwiseOr(otherCombinedValue, kValue);
                         uniqueValues.Add(bitwiseOr(combinedValue, kValue));
                         uniqueValues.Add(otherCombinedValue);
+						uniqueValues.Add(bitwiseOr(kValue, bitwiseOr(singleValue, secondValue)));
                     }
                 }
             }
